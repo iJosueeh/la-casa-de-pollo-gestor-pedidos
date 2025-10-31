@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "target": "ESNext",
@@ -26,5 +27,7 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true
+    
   }
+  
 }
