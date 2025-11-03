@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getProductos } from "@/features/products/services/product.service";
 import type { Product } from "@/features/products/types/product.types";
 
+const PLACEHOLDER_IMAGE_URL = "https://w7.pngwing.com/pngs/307/581/png-transparent-roast-chicken-barbecue-chicken-chicken-leg-computer-icons-chicken-leg-food-animals-hat.png";
+
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +20,7 @@ export const useProducts = () => {
           description: item.descripcion,
           price: item.precio,
           stock: item.stock,
-          image: item.imagen || undefined,
+          image: item.imagen || PLACEHOLDER_IMAGE_URL, 
         }));
         setProducts(mappedProducts);
       } catch (err) {

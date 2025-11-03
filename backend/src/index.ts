@@ -1,10 +1,14 @@
+
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.join(__dirname, '../../.env') });
+
+console.log('Index.ts - Supabase URL:', process.env.VITE_SUPABASE_URL);
+console.log('Index.ts - Supabase Service Role Key:', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Loaded' : 'Not Loaded');
+import productRoutes from '@routes/product.routes';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
-import productRoutes from '@routes/product.routes';
-
-dotenv.config({ path: '../../.env' });
-
 const app = express();
 const port = process.env.PORT || 4000;
 

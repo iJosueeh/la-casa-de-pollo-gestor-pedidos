@@ -4,11 +4,13 @@ import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Header, Sidebar } from "./shared/components/layout";
 import { Outlet } from 'react-router-dom';
+import { Notification } from './shared/components/Notification';
+import { useNotificationContext } from './shared/context/NotificationContext';
 
-// Trivial change to force rebuild
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+  const { notification, hideNotification } = useNotificationContext();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -29,6 +31,12 @@ function App() {
             </div>
         </main>
       </div>
+      <Notification
+        show={notification.show}
+        message={notification.message}
+        type={notification.type}
+        onClose={hideNotification}
+      />
     </div>
   );
 }
