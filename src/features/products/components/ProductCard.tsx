@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Product } from '@/features/products/types';
+import type { Product } from "@/features/products/types/product.types";
 import { Card } from '@/shared/components/iu';
 import { useCart } from '@/features/cart/hooks';
 import { Minus, Plus } from 'lucide-react';
