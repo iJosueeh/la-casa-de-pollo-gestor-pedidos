@@ -3,13 +3,14 @@ import { Product } from '@backendTypes/product.types';
 
 export const productRepository = {
   async getAll(): Promise<Product[]> {
-    console.log('Fetching all products from Supabase...');
-    const { data, error } = await supabase.from('producto').select('*');
+    const { data, error } = await supabase
+      .from('producto')
+      .select('*');
+
     if (error) {
-      console.error('Supabase error in getAll:', error);
-      throw error;
+      console.error('Error fetching products from Supabase:', error);
+      throw new Error('Could not fetch products');
     }
-    console.log('Supabase data in getAll:', data);
     return data as Product[];
   },
 

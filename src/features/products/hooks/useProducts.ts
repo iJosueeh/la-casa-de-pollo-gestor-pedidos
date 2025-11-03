@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getProductos } from "@/features/products/services/product.service";
 import type { Product } from "@/features/products/types/product.types";
 
-const PLACEHOLDER_IMAGE_URL = "https://w7.pngwing.com/pngs/307/581/png-transparent-roast-chicken-barbecue-chicken-chicken-leg-computer-icons-chicken-leg-food-animals-hat.png";
+const PLACEHOLDER_IMAGE_URL = "https://buenazo.cronosmedia.glr.pe/original/2020/08/30/5f4c2be6cce5112a0674ccc8.jpg";
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
