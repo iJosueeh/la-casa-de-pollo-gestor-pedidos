@@ -3,15 +3,19 @@ import './App.css'
 import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Header, Sidebar } from "./shared/components/layout";
-import { Outlet } from 'react-router-dom';
+
 import { Notification } from './shared/components/Notification';
 import { useNotificationContext } from './shared/context/NotificationContext';
+import { Outlet, Link, useNavigate } from "react-router-dom"; // 👈 aquí agregamos useNavigate
+
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
   const { notification, hideNotification } = useNotificationContext();
+  const navigate = useNavigate();
 
+  // 🟡 Control del menú lateral
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -20,15 +24,31 @@ function App() {
     setIsSidebarOpen(false);
   };
 
+  // 🔐 Cierre de sesión
+  const handleLogout = () => {
+    localStorage.removeItem('usuario');
+    navigate('/login');
+  };
+
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col bg-yellow-50">
+      {/* 🐔 Encabezado */}
       <Header onMenuClick={toggleSidebar} />
+
+      {/* 🟨 Cuerpo principal */}
       <div className="flex flex-1">
-        <Sidebar isOpen={isSidebarOpen} onLinkClick={closeSidebar} onLogoutClick={closeSidebar} />
+        {/* Sidebar lateral */}
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onLinkClick={closeSidebar}
+          onLogoutClick={handleLogout} // aquí usamos el logout real
+        />
+
+        {/* Contenido dinámico */}
         <main className="flex-1 p-6 bg-gray-50 transition-all duration-300">
-            <div className="flex flex-col items-center justify-center h-full w-full">
-                <Outlet />
-            </div>
+          <div className="flex flex-col items-center justify-center h-full w-full">
+            <Outlet />
+          </div>
         </main>
       </div>
       <Notification
@@ -41,4 +61,4 @@ function App() {
   );
 }
 
-export { App };
+export default App;
