@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Eye } from 'lucide-react';
 import { Modal } from './Modal';
 
-// Define the type for a single order
+
 type Order = {
   id: string;
   customer: string;
@@ -14,7 +14,7 @@ type Order = {
   products: { name: string; quantity: number }[];
 };
 
-// Static data for recent orders
+
 const recentOrders: Order[] = [
   { 
     id: 'PED-001', 
@@ -68,7 +68,7 @@ const recentOrders: Order[] = [
   },
 ];
 
-// Define the props for the component
+
 type PedidosRecientesProps = {
   title?: string;
   orders?: Order[];
@@ -154,7 +154,7 @@ export const PedidosRecientes: React.FC<PedidosRecientesProps> = ({
                 <p className="font-bold text-black">{selectedOrder.id}</p>
               </div>
 
-              {/* Cliente and Hora (on the same line) */}
+              {/* Cliente y Hora */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="text-sm text-gray-500">Cliente</p>
@@ -197,7 +197,7 @@ export const PedidosRecientes: React.FC<PedidosRecientesProps> = ({
               <p className="text-2xl font-bold text-red-800">S/ {selectedOrder.total.toFixed(2)}</p>
             </div>
 
-            {/* Status */}
+            {/* Estado */}
             <div className="flex flex-col items-center mt-4">
               <p className="text-sm text-gray-500 mb-2">Cambiar Estado:</p>
               <div className="flex flex-wrap justify-center gap-2">

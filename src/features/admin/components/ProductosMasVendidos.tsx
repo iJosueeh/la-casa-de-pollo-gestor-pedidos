@@ -12,7 +12,7 @@ type Product = {
 
 const productIcons = {
   'Pollo a la Brasa': Drumstick,
-  Combos: Soup, // Using Soup as a placeholder for Combos
+  Combos: Soup, 
   Bebidas: Coffee,
   Adicionales: PlusCircle,
 };
