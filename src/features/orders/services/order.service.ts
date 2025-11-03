@@ -1,62 +1,89 @@
-import { supabase } from "@/lib/supabase";
-import type { Order, OrderStatus } from "@/features/orders/types";
+import type { Order } from '../types';
+import type { CartItem } from '@/features/cart/types';
+import { supabase } from '@/config/supabase'; // Import supabase for existing functions
 
-const TABLE_NAME = "orders";
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL || "http://localhost:4000";
+const TABLA_PEDIDOS = 'pedido'; // Define table name here
 
-// 1. Create (Crear un nuevo pedido)
-export const createOrder = async (orderData: Omit<Order, 'id' | 'createdAt'>): Promise<Order> => {
-  const { data, error } = await supabase
-    .from(TABLE_NAME)
-    .insert([orderData])
-    .select()
-    .single();
+interface CreateOrderFrontendPayload {
+  clientId: number;
+  userId: number; // Assuming a default user for now, will need actual user management later
+  nombrecliente: string;
+  direccion?: string;
+  notas?: string;
+  items: Array<{ productId: number; quantity: number; price: number }>;
+}
 
-  if (error) {
-    console.error("Error creating order:", error);
-    throw new Error(error.message);
+export const createOrder = async (cartItems: CartItem[], clientInfo: { clientId: number; nombrecliente: string; direccion?: string; notas?: string }): Promise<Order | null> => {
+  try {
+    const payload: CreateOrderFrontendPayload = {
+      clientId: clientInfo.clientId,
+      userId: 1, // Placeholder user ID
+      nombrecliente: clientInfo.nombrecliente,
+      direccion: clientInfo.direccion,
+      notas: clientInfo.notas,
+      items: cartItems.map(item => ({
+        productId: parseInt(item.id), // Convert string ID to number for backend
+        quantity: item.quantity,
+        price: item.price,
+      })),
+    };
+
+    const response = await fetch(`${BACKEND_API_URL}/api/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('❌ Error al crear pedido en el backend:', errorData);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: Order = await response.json();
+    return data;
+  } catch (error: unknown) {
+    console.error('❌ Error al crear pedido:', error instanceof Error ? error.message : error);
+    return null;
   }
-  return data as Order;
 };
 
-// 2. Read (Leer todos los pedidos o filtrar por estado)
-export const getOrders = async (status?: OrderStatus): Promise<Order[]> => {
-  let query = supabase.from(TABLE_NAME).select("*");
+export const getOrders = async (): Promise<Order[]> => {
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/api/orders`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const backendOrders: any[] = await response.json(); // Use 'any' for raw backend response
 
-  if (status) {
-    query = query.eq("status", status);
+    // Map backend Pedido type to frontend Order type
+    const mappedOrders: Order[] = backendOrders.map(bOrder => ({
+      id: bOrder.idpedido.toString(), // Convert number to string
+      client: bOrder.nombrecliente, // Map nombrecliente to client
+      total: bOrder.total,
+      createdAt: bOrder.fecha, // Map fecha to createdAt
+      status: bOrder.estado, // Map estado to status
+      products: [], // Placeholder: Backend currently doesn't return products directly with Pedido
+      paymentMethod: "Efectivo", // Placeholder: Backend currently doesn't return paymentMethod directly with Pedido
+    }));
+
+    return mappedOrders;
+  } catch (error: unknown) {
+    console.error('❌ Error al obtener pedidos del backend:', error instanceof Error ? error.message : error);
+    return [];
   }
-
-  const { data, error } = await query.order("createdAt", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching orders:", error);
-    throw new Error(error.message);
-  }
-  return (data as Order[]) || [];
 };
 
-// 3. Update (Actualizar el estado de un pedido)
-export const updateOrderStatus = async (orderId: string, status: OrderStatus): Promise<Order> => {
-  const { data, error } = await supabase
-    .from(TABLE_NAME)
-    .update({ status })
-    .eq("id", orderId)
-    .select()
-    .single();
-
-  if (error) {
-    console.error(`Error updating order ${orderId}:`, error);
-    throw new Error(error.message);
-  }
-  return data as Order;
+// These functions will need to be migrated to backend API calls if full backend management is desired
+export const actualizarPedido = async (id: string, cambios: Partial<Order>): Promise<Order | null> => {
+  console.warn('actualizarPedido is not yet implemented via backend API.');
+  return null;
 };
 
-// 4. Delete (Eliminar un pedido)
-export const deleteOrder = async (orderId: string): Promise<void> => {
-  const { error } = await supabase.from(TABLE_NAME).delete().eq("id", orderId);
-
-  if (error) {
-    console.error(`Error deleting order ${orderId}:`, error);
-    throw new Error(error.message);
-  }
+export const eliminarPedido = async (id: string): Promise<boolean> => {
+  console.warn('eliminarPedido is not yet implemented via backend API.');
+  return false;
 };

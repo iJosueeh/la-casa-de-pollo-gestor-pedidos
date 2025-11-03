@@ -15,11 +15,10 @@ export const ORDER_STATUS = {
 export type OrderStatus = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];
 
 export interface Order {
-  id: string;
-  client: string;
-  products: ProductInCart[];
-  paymentMethod: "Efectivo" | "Tarjeta";
+  idpedido: number; // Aligned with backend
+  nombrecliente: string; // Aligned with backend
+  fecha: string; // Aligned with backend
   total: number;
-  createdAt: string;
   status: OrderStatus;
+  // Temporarily removed products and paymentMethod as they are not directly in backend Pedido
 }
