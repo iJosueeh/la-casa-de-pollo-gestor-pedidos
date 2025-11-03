@@ -59,7 +59,7 @@ export const CartView = () => {
 
     return (
         <div className="flex-1 p-6 overflow-y-auto">
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-7x1 mx-autookat">
                 <div className="flex items-center justify-between mb-6">
                     <div className="w-6 lg:hidden" />
                 </div>
@@ -80,7 +80,7 @@ export const CartView = () => {
                             cartItems.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4"
+                                    className="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 lg:space-x-10"
                                 >
                                     <div className="bg-linear-to-br from-red-100 to-orange-100 w-20 h-20 rounded-lg flex items-center justify-center text-4xl">
                                         <img
@@ -126,7 +126,7 @@ export const CartView = () => {
                         )}
                     </div>
                     {cartItems.length > 0 && (
-                        <div className="lg:col-span-1">
+                        <div className="lg:col-span-3">
                             <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
                                 <h3 className="text-xl font-bold mb-4">Resumen</h3>
                                 <div className="space-y-3 mb-6">

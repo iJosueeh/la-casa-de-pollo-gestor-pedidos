@@ -11,8 +11,7 @@ export const useOrders = (initialStatusFilter?: OrderStatus) => {
   const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
-      // getOrders no longer takes a statusFilter argument directly
-      const data = await getOrders(); 
+      const data = await getOrders(statusFilter); 
       setOrders(data);
       setError(null);
     } catch (err) {
@@ -22,7 +21,7 @@ export const useOrders = (initialStatusFilter?: OrderStatus) => {
     } finally {
       setLoading(false);
     }
-  }, []); // Removed statusFilter from dependencies as getOrders doesn't use it directly
+  }, [statusFilter]);
 
   useEffect(() => {
     fetchOrders();

@@ -33,8 +33,12 @@ export const orderService = {
     return newOrder;
   },
 
-  async listAllOrders(): Promise<Pedido[]> {
-    const orders = await orderRepository.getAllOrders();
+  async listAllOrders(status?: string): Promise<Pedido[]> {
+    const orders = await orderRepository.getAllOrders(status);
     return orders;
+  },
+
+  async getOrderDetails(orderId: number): Promise<Pedido & { products: any[] } | null> {
+    return orderRepository.getOrderById(orderId);
   },
 };

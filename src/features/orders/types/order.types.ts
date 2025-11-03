@@ -5,11 +5,11 @@ export interface ProductInCart extends Product {
 }
 
 export const ORDER_STATUS = {
-  PENDING: "Pendiente",
-  PREPARING: "En preparación",
-  DELIVERING: "En reparto",
-  DELIVERED: "Entregado",
-  CANCELED: "Cancelado",
+  PENDING: "pendiente",
+  PREPARING: "en preparación",
+  DELIVERING: "en reparto",
+  DELIVERED: "entregado",
+  CANCELED: "cancelado",
 } as const;
 
 export type OrderStatus = (typeof ORDER_STATUS)[keyof typeof ORDER_STATUS];

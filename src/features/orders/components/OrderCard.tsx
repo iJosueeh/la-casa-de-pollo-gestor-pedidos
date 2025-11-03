@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Order } from '@/features/orders/types';
 import { Card } from '@/shared/components/iu';
 import { OrderTimeline } from './OrderTimeline';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { getOrderDetails } from '@/features/orders/services/order.service';
 
 interface OrderCardProps {
   order: Order;
 }
 
-export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
-  const [isExpanded, setIsExpanded] = React.useState(false);
+export const OrderCard: React.FC<OrderCardProps> = ({ order: initialOrder }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [orderDetails, setOrderDetails] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('es-PE', {
@@ -17,6 +20,20 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
       timeStyle: 'short',
     });
   };
+
+  const handleToggleExpand = async () => {
+    setIsExpanded(!isExpanded);
+    if (!isExpanded && !orderDetails) {
+      setLoading(true);
+      const details = await getOrderDetails(initialOrder.id);
+      console.log('Order details from API:', details);
+      setOrderDetails(details);
+      setLoading(false);
+    }
+  };
+
+  const order = orderDetails || initialOrder;
+  console.log('Order object being rendered:', order);
 
   return (
     <Card className="mb-4 transition-all duration-300">
@@ -33,7 +50,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           <div className="md:col-span-1 text-right">
             <p className="font-bold text-xl text-red-600">S/. {order.total.toFixed(2)}</p>
             <button 
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={handleToggleExpand}
               className="text-blue-500 hover:text-blue-700 text-sm font-medium flex items-center ml-auto">
               {isExpanded ? 'Ver menos' : 'Ver detalles'}
               {isExpanded ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />}
@@ -42,21 +59,27 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         </div>
         {isExpanded && (
           <div className="mt-4 pt-4 border-t border-gray-200 animate-fade-in-down">
-            <h4 className="font-semibold mb-2">Detalles del Pedido:</h4>
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <p><strong>Método de Pago:</strong> {order.paymentMethod}</p>
-                    <p><strong>Estado:</strong> <span className="font-medium p-1 rounded-md bg-blue-100 text-blue-800">{order.status}</span></p>
+            {loading ? (
+              <p>Cargando detalles...</p>
+            ) : (
+              <>
+                <h4 className="font-semibold mb-2">Detalles del Pedido:</h4>
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <p><strong>Método de Pago:</strong> {order.paymentMethod}</p>
+                        <p><strong>Estado:</strong> <span className="font-medium p-1 rounded-md bg-blue-100 text-blue-800">{order.status}</span></p>
+                    </div>
+                    <div>
+                        <h5 className="font-semibold mb-1">Productos:</h5>
+                        <ul className="list-disc pl-5 text-sm">
+                        {order.products.map(p => (
+                            <li key={p.id}>{p.name} (x{p.quantity})</li>
+                        ))}
+                        </ul>
+                    </div>
                 </div>
-                <div>
-                    <h5 className="font-semibold mb-1">Productos:</h5>
-                    <ul className="list-disc pl-5 text-sm">
-                    {order.products.map(p => (
-                        <li key={p.id}>{p.name} (x{p.quantity})</li>
-                    ))}
-                    </ul>
-                </div>
-            </div>
+              </>
+            )}
           </div>
         )}
       </div>

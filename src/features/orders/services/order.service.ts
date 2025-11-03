@@ -1,4 +1,4 @@
-import type { Order } from '../types';
+import type { Order, OrderStatus } from '../types';
 import type { CartItem } from '@/features/cart/types';
 import { supabase } from '@/config/supabase'; // Import supabase for existing functions
 
@@ -51,9 +51,14 @@ export const createOrder = async (cartItems: CartItem[], clientInfo: { clientId:
   }
 };
 
-export const getOrders = async (): Promise<Order[]> => {
+export const getOrders = async (statusFilter?: OrderStatus): Promise<Order[]> => {
   try {
-    const response = await fetch(`${BACKEND_API_URL}/api/orders`);
+    const url = new URL(`${BACKEND_API_URL}/api/orders`);
+    if (statusFilter) {
+      url.searchParams.append('status', statusFilter);
+    }
+
+    const response = await fetch(url.toString());
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -74,6 +79,31 @@ export const getOrders = async (): Promise<Order[]> => {
   } catch (error: unknown) {
     console.error('❌ Error al obtener pedidos del backend:', error instanceof Error ? error.message : error);
     return [];
+  }
+};
+
+export const getOrderDetails = async (orderId: string): Promise<Order | null> => {
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/api/orders/${orderId}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const orderDetails: any = await response.json();
+
+    const mappedOrder: Order = {
+      id: orderDetails.idpedido.toString(),
+      client: orderDetails.nombrecliente,
+      total: orderDetails.total,
+      createdAt: orderDetails.fecha,
+      status: orderDetails.estado,
+      products: orderDetails.products.map((p: any) => ({ id: p.name, name: p.name, quantity: p.quantity, price: p.price })),
+      paymentMethod: "Efectivo",
+    };
+
+    return mappedOrder;
+  } catch (error: unknown) {
+    console.error(`❌ Error al obtener los detalles del pedido ${orderId}:`, error instanceof Error ? error.message : error);
+    return null;
   }
 };
 
