@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { ProductList } from "../shared/components/ProductList";
 
 // Trivial change to force rebuild
