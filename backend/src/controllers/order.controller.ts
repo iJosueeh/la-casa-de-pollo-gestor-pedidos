@@ -23,9 +23,12 @@ export const orderController = {
 
   async getOrders(req: Request, res: Response): Promise<void> {
     try {
-      const { status } = req.query;
-      const orders = await orderService.listAllOrders(status as string | undefined);
-      res.json(orders);
+      const { status, page, limit } = req.query;
+      const pageNumber = page ? parseInt(page as string, 10) : undefined;
+      const limitNumber = limit ? parseInt(limit as string, 10) : undefined;
+
+      const { orders, totalCount } = await orderService.listAllOrders(status as string | undefined, pageNumber, limitNumber);
+      res.json({ orders, totalCount });
     }
     catch (error: unknown) {
       console.error('Error in orderController.getOrders:', error instanceof Error ? error.message : error);
@@ -45,6 +48,28 @@ export const orderController = {
     } catch (error: unknown) {
       console.error('Error in orderController.getOrderById:', error instanceof Error ? error.message : error);
       res.status(500).json({ error: 'Error interno del servidor al obtener el pedido' });
+    }
+  },
+
+  async updateOrderStatus(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+
+      if (!status) {
+        res.status(400).json({ error: 'Status is required' });
+        return;
+      }
+
+      const updatedOrder = await orderService.updateOrderStatus(parseInt(id, 10), status);
+      if (updatedOrder) {
+        res.json(updatedOrder);
+      } else {
+        res.status(404).json({ error: 'Order not found' });
+      }
+    } catch (error: unknown) {
+      console.error('Error in orderController.updateOrderStatus:', error instanceof Error ? error.message : error);
+      res.status(500).json({ error: 'Error interno del servidor al actualizar el estado del pedido' });
     }
   },
 };

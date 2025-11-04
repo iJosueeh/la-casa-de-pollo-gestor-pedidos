@@ -40,12 +40,16 @@ export const orderService = {
     return newOrder;
   },
 
-  async listAllOrders(status?: string): Promise<Pedido[]> {
-    const orders = await orderRepository.getAllOrders(status);
-    return orders;
+  async listAllOrders(status?: string, page?: number, limit?: number): Promise<{ orders: Pedido[], totalCount: number }> {
+    const { orders, totalCount } = await orderRepository.getAllOrders(status, page, limit);
+    return { orders, totalCount };
   },
 
   async getOrderDetails(orderId: number): Promise<Pedido & { products: OrderProduct[] } | null> {
     return orderRepository.getOrderById(orderId);
+  },
+
+  async updateOrderStatus(orderId: number, newStatus: string): Promise<Pedido | null> {
+    return orderRepository.updateOrderStatus(orderId, newStatus);
   },
 };

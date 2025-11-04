@@ -8,7 +8,7 @@ export const authController = {
       const user = await authService.verifyCredentials(email, contrasena);
 
       if (user) {
-        // In a real application, you would generate a JWT here
+        
         res.json({ message: 'Login successful', user });
       } else {
         res.status(401).json({ error: 'Invalid credentials' });

@@ -53,14 +53,14 @@ export const createOrder = async (cartItems: CartItem[], clientInfo: { clientId:
   }
 };
 
-export const getOrders = async (statusFilter?: OrderStatus): Promise<Order[]> => {
+export const getOrders = async (statusFilter?: OrderStatus, page?: number, limit?: number): Promise<{ orders: Order[], totalCount: number }> => {
   try {
-    const backendOrders = await apiClient.get<BackendOrder[]>("/api/orders", {
-      params: { status: statusFilter },
+    const response = await apiClient.get<{ orders: BackendOrder[], totalCount: number }>("/api/orders", {
+      params: { status: statusFilter, page, limit },
     });
 
     // Map backend Pedido type to frontend Order type
-    const mappedOrders: Order[] = backendOrders.map(bOrder => ({
+    const mappedOrders: Order[] = response.orders.map(bOrder => ({
       id: bOrder.idpedido.toString(),
       client: bOrder.nombrecliente,
       total: bOrder.total,
@@ -70,10 +70,10 @@ export const getOrders = async (statusFilter?: OrderStatus): Promise<Order[]> =>
       paymentMethod: "Efectivo", // Placeholder as BackendOrder does not contain payment method
     }));
 
-    return mappedOrders;
+    return { orders: mappedOrders, totalCount: response.totalCount };
   } catch (error: unknown) {
     console.error('❌ Error al obtener pedidos del backend:', error instanceof Error ? error.message : error);
-    return [];
+    return { orders: [], totalCount: 0 };
   }
 };
 
@@ -95,6 +95,16 @@ export const getOrderDetails = async (orderId: string): Promise<Order | null> =>
     return mappedOrder;
   } catch (error: unknown) {
     console.error(`❌ Error al obtener los detalles del pedido ${orderId}:`, error instanceof Error ? error.message : error);
+    return null;
+  }
+};
+
+export const updateOrderStatus = async (orderId: string, newStatus: OrderStatus): Promise<Order | null> => {
+  try {
+    const updatedOrder = await apiClient.patch<Order>(`/api/orders/${orderId}/status`, { status: newStatus });
+    return updatedOrder;
+  } catch (error: unknown) {
+    console.error(`❌ Error al actualizar el estado del pedido ${orderId}:`, error instanceof Error ? error.message : error);
     return null;
   }
 };

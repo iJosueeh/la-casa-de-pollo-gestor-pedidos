@@ -4,6 +4,7 @@ import React from 'react';
 import { ORDER_STATUS } from '@/features/orders/types';
 import type { OrderStatus } from '@/features/orders/types';
 import { Button } from '@/shared/components/iu';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const statusFilters: (OrderStatus | undefined)[] = [
   undefined, // All
@@ -24,7 +25,7 @@ const statusLabels: Record<string, string> = {
 }
 
 const OrdersPage = () => {
-  const { orders, loading, error, filterByStatus, currentFilter } = useOrders();
+  const { orders, loading, error, filterByStatus, currentFilter, currentPage, totalPages, goToPage } = useOrders();
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
@@ -47,7 +48,7 @@ const OrdersPage = () => {
 
       {loading && (
         <div className="text-center py-10">
-          <p>Cargando pedidos...</p> 
+          <p>Cargando pedidos...</p>
         </div>
       )}
       {error && (
@@ -55,7 +56,41 @@ const OrdersPage = () => {
           <p>Error al cargar los pedidos: {error}</p>
         </div>
       )}
-      {!loading && !error && <OrderList orders={orders} />}
+      {!loading && !error && (
+        <>
+          <OrderList orders={orders} />
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center space-x-2 mt-8">
+              <Button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                variant="secondary"
+                className="p-2"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <Button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  variant={currentPage === page ? 'info' : 'secondary'}
+                  className="px-4 py-2"
+                >
+                  {page}
+                </Button>
+              ))}
+              <Button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                variant="secondary"
+                className="p-2"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </Button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

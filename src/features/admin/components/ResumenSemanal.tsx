@@ -1,30 +1,46 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-interface DailySalesData {
-  day: string;
-  earnings: number;
-}
-
-const initialData: DailySalesData[] = [
-  { day: 'Lunes', earnings: 1200 },
-  { day: 'Martes', earnings: 1500 },
-  { day: 'Miércoles', earnings: 1300 },
-  { day: 'Jueves', earnings: 1700 },
-  { day: 'Viernes', earnings: 2000 },
-];
+import { useWeeklySalesSummary } from '../hooks/useWeeklySalesSummary';
+import type { DailySalesData } from '../types/admin.types';
 
 interface ResumenSemanalProps {
-  data?: DailySalesData[];
+  // No longer needs a data prop as it fetches its own
 }
 
-export const ResumenSemanal: React.FC<ResumenSemanalProps> = ({ data = initialData }) => {
+export const ResumenSemanal: React.FC<ResumenSemanalProps> = () => {
+  const { summary, loading, error } = useWeeklySalesSummary();
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6 flex items-center justify-center h-80">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        <p className="ml-3 text-gray-600">Cargando resumen semanal...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6 text-red-500 h-80 flex items-center justify-center">
+        <p>Error: {error}</p>
+      </div>
+    );
+  }
+
+  if (summary.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6 h-80 flex items-center justify-center">
+        <p className="text-gray-500">No hay datos de ventas para esta semana.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h3 className="text-lg font-bold mb-4">Resumen Semanal de Ventas</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
-          data={data}
+          data={summary}
           margin={{
             top: 20,
             right: 30,

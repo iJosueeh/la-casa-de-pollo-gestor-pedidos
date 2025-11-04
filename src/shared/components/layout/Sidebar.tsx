@@ -13,10 +13,9 @@ const links = [
 export const AppSidebar: React.FC<{ isOpen: boolean; onLinkClick: () => void; onLogoutClick: () => void; isDesktop: boolean }> = ({ isOpen, onLinkClick, onLogoutClick, isDesktop }) => {
   return (
     <div
-      className={`p-6 z-40 transition-all duration-300 ease-in-out bg-white flex flex-col justify-between h-screen fixed md:static md:h-auto
-        ${isOpen ? "w-64 translate-x-0" : "-translate-x-full md:translate-x-0"}
+      className={`p-6 z-20 transition-all duration-300 ease-in-out bg-white flex flex-col justify-between h-[calc(100vh-4rem)] fixed top-16 left-0
         ${isDesktop ? "w-56" : "w-64"}
-        ${!isDesktop && !isOpen ? "hidden" : ""}
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}>
       <div className="absolute top-4 right-4 md:hidden">
         <Button onClick={onLinkClick} variant="secondary" className="p-2">

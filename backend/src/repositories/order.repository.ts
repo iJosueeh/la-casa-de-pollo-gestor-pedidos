@@ -53,20 +53,25 @@ export const orderRepository = {
     return data as DetallePedido[];
   },
 
-  async getAllOrders(status?: string): Promise<Pedido[]> {
-    let query = supabase.from('pedido').select('*').order('fecha', { ascending: false });
+  async getAllOrders(status?: string, page: number = 1, limit: number = 6): Promise<{ orders: Pedido[], totalCount: number }> {
+    const offset = (page - 1) * limit;
+
+    let query = supabase.from('pedido').select('*', { count: 'exact' }).order('fecha', { ascending: false }).order('idpedido', { ascending: false });
 
     if (status) {
       query = query.eq('estado', status);
     }
 
-    const { data, error } = await query;
+    query = query.range(offset, offset + limit - 1);
+
+    const { data, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching all orders:', error);
-      throw new Error('Could not fetch all orders');
+      console.error('Error fetching all orders with pagination from Supabase:', error);
+      throw new Error('Could not fetch all orders with pagination');
     }
-    return data as Pedido[];
+
+    return { orders: data as Pedido[], totalCount: count || 0 };
   },
 
   async getOrderById(orderId: number): Promise<Pedido & { products: { idproducto: number; name: string; quantity: number; price: number; subtotal: number }[] } | null> {
@@ -134,5 +139,26 @@ export const orderRepository = {
     console.log('Mapped products:', products);
 
     return { ...orderData, products };
+  },
+
+  async updateOrderStatus(orderId: number, newStatus: string): Promise<Pedido | null> {
+    console.log(`Attempting to update order ${orderId} to status ${newStatus}`);
+    const { data, error } = await supabase
+      .from('pedido')
+      .update({ estado: newStatus })
+      .eq('idpedido', orderId)
+      .select(); // Removed .single()
+
+    if (error) {
+      console.error(`Supabase error updating status for order ${orderId}:`, error);
+      throw new Error('Could not update order status');
+    }
+
+    // If data is an empty array, it means no row was found/updated
+    if (!data || data.length === 0) {
+      return null;
+    }
+
+    return data[0] as Pedido;
   },
 };

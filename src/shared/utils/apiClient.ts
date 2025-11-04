@@ -40,6 +40,9 @@ export const apiClient = {
   async post<T>(path: string, body: unknown, options?: RequestOptions): Promise<T> {
     return this.request<T>('POST', path, options, body);
   },
+  async patch<T>(path: string, body: unknown, options?: RequestOptions): Promise<T> {
+    return this.request<T>('PATCH', path, options, body);
+  },
   async request<T>(method: string, path: string, options?: RequestOptions, body?: unknown): Promise<T> {
     const { params, ...fetchOptions } = options || {};
     const url = this.buildUrl(path, params);

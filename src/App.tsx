@@ -40,7 +40,7 @@ function App() {
       {/* 🐔 Encabezado */}
       <AppHeader
         onMenuClick={toggleSidebar}
-        className={`${isSidebarOpen && isDesktop ? "md:ml-56 md:w-[calc(100%-14rem)]" : ""}`}
+        className=""
       />
 
       {/* 🟨 Cuerpo principal */}
@@ -54,11 +54,8 @@ function App() {
         />
 
         {/* Contenido dinámico */}
-        <main 
-          className={`flex-1 p-6 bg-gray-50 transition-all duration-300 overflow-y-auto min-h-[calc(100vh-4rem)] ${
-            isSidebarOpen && isDesktop ? "md:ml-56" : ""
-          }`}
-          onClick={() => !isDesktop && isSidebarOpen && closeSidebar()}
+                <main
+                  className={`flex-1 p-6 bg-gray-50 transition-all duration-300 overflow-y-auto min-h-[calc(100vh-4rem)]`}          onClick={() => !isDesktop && isSidebarOpen && closeSidebar()}
         >
           <div className="max-w-7xl mx-auto">
             <Outlet />

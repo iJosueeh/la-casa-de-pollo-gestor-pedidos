@@ -7,11 +7,13 @@ import { useNotificationContext } from '@/shared/context/NotificationContext';
 import { clearCart } from '../store/cartSlice';
 import { useDispatch } from 'react-redux';
 import { ClientFormModal } from './ClientFormModal'; // Import the new modal
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 export const CartView = () => {
     const { cartItems, addProduct, removeProduct } = useCart();
     const { showNotification } = useNotificationContext();
     const dispatch = useDispatch();
+    const navigate = useNavigate(); // Initialize useNavigate
 
     const [isClientModalOpen, setIsClientModalOpen] = useState(false);
 
@@ -70,7 +72,7 @@ export const CartView = () => {
                                 <ShoppingCart className="w-24 h-24 mx-auto text-gray-300 mb-4" />
                                 <p className="text-gray-500 text-lg">Tu carrito está vacío</p>
                                 <button
-                                    onClick={() => { /* Navigate to products page */ }}
+                                    onClick={() => navigate("/producto")}
                                     className="mt-6 w-full bg-linear-to-r from-red-500 to-orange-500 text-white px-8 py-3 rounded-lg"
                                 >
                                     Ver Menú

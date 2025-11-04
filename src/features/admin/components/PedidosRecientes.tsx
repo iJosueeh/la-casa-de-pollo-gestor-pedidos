@@ -1,37 +1,56 @@
 import React, { useState } from 'react';
-import { Eye } from 'lucide-react';
+import { Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Modal } from './Modal';
 import { useOrders } from '@/features/orders/hooks/useOrders';
-import type { Order, OrderStatus } from '@/features/orders/types/order.types';
-
+import { ORDER_STATUS, type Order, type OrderStatus } from '@/features/orders/types/order.types';
+import { getOrderDetails } from '@/features/orders/services/order.service';
+import { Button } from '@/shared/components/iu';
 
 type PedidosRecientesProps = {
   title?: string;
 };
 
-const statusColors = {
-  Pendiente: 'bg-orange-100 text-orange-800',
-  "En preparación": 'bg-yellow-100 text-yellow-800',
-  "En reparto": 'bg-blue-100 text-blue-800',
-  Entregado: 'bg-green-100 text-green-800',
-  Cancelado: 'bg-red-100 text-red-800',
+const statusColors: Record<OrderStatus, string> = {
+  [ORDER_STATUS.PENDING]: 'bg-orange-100 text-orange-800',
+  [ORDER_STATUS.PREPARING]: 'bg-yellow-100 text-yellow-800',
+  [ORDER_STATUS.DELIVERING]: 'bg-blue-100 text-blue-800',
+  [ORDER_STATUS.DELIVERED]: 'bg-green-100 text-green-800',
+  [ORDER_STATUS.CANCELED]: 'bg-red-100 text-red-800',
 };
 
 export const PedidosRecientes: React.FC<PedidosRecientesProps> = ({
   title = 'Pedidos Recientes',
 }) => {
-  const { orders, loading, error } = useOrders();
+  const { orders, loading, error, updateStatus, currentPage, totalPages, goToPage } = useOrders();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [modalLoading, setModalLoading] = useState(false);
 
-  const handleOpenModal = (order: Order) => {
-    setSelectedOrder(order);
+  const handleOpenModal = async (order: Order) => {
+    setModalLoading(true);
     setIsModalOpen(true);
+    try {
+      const details = await getOrderDetails(order.id);
+      setSelectedOrder(details);
+    } catch (err) {
+      console.error('Error fetching order details for modal:', err);
+      // Optionally show an error notification
+    } finally {
+      setModalLoading(false);
+    }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedOrder(null);
+  };
+
+  const handleStatusChange = async (newStatus: OrderStatus) => {
+    if (selectedOrder) {
+      await updateStatus(selectedOrder.id, newStatus);
+      // Update the local selectedOrder state to reflect the change immediately
+      setSelectedOrder(prev => prev ? { ...prev, status: newStatus } : null);
+    }
   };
 
   if (loading) return <div className="bg-white rounded-lg shadow-md p-6">Cargando pedidos...</div>;
@@ -80,78 +99,111 @@ export const PedidosRecientes: React.FC<PedidosRecientesProps> = ({
         </table>
       </div>
 
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center space-x-2 mt-4">
+          <Button
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            variant="secondary"
+            className="p-2"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </Button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            <Button
+              key={page}
+              onClick={() => goToPage(page)}
+              variant={currentPage === page ? 'info' : 'secondary'}
+              className="px-4 py-2"
+            >
+              {page}
+            </Button>
+          ))}
+          <Button
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            variant="secondary"
+            className="p-2"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </Button>
+        </div>
+      )}
+
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-        {selectedOrder && (
-          <div className="p-2 text-gray-800">
-            <h4 className="text-xl font-bold mb-4 text-center">Detalles del Pedido</h4>
-            
-            <div className="flex flex-col gap-4 mb-4">
-              {/* ID */}
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-sm text-gray-500">ID</p>
-                <p className="font-bold text-black">{selectedOrder.id}</p>
-              </div>
-
-              {/* Cliente y Fecha */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-sm text-gray-500">Cliente</p>
-                  <p className="font-bold text-black">{selectedOrder.client}</p>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-sm text-gray-500">Fecha</p>
-                  <p className="font-bold text-black">{new Date(selectedOrder.createdAt).toLocaleString()}</p>
-                </div>
-              </div>
-
-              {/* Total */}
-              <div className="bg-red-100 bg-opacity-50 p-3 rounded-lg mb-4 text-center">
-                <p className="text-sm text-red-800">Total</p>
-                <p className="text-2xl font-bold text-red-800">S/ {selectedOrder.total.toFixed(2)}</p>
-              </div>
-            </div>
-
-            {/* Productos */}
-            <div className="bg-gray-50 p-3 rounded-lg mb-4">
-              <p className="text-sm text-gray-500 mb-2">Productos</p>
-              <ul className="list-disc list-inside">
-                {selectedOrder.products.map((product, index) => (
-                  <li key={index} className="text-black">
-                    <span className="font-bold">{product.name}</span> (x{product.quantity})
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Estado */}
-            <div className="flex flex-col items-center mt-4">
-              <p className="text-sm text-gray-500 mb-2">Cambiar Estado:</p>
-              <div className="flex flex-wrap justify-center gap-2">
-                {Object.values(ORDER_STATUS).map((status) => {
-                  const isSelected = selectedOrder.status === status;
-                  const borderColorClass =
-                    status === 'Pendiente' ? 'border-orange-500' :
-                    status === 'En preparación' ? 'border-yellow-500' :
-                    status === 'En reparto' ? 'border-blue-500' :
-                    status === 'Entregado' ? 'border-green-500' :
-                    'border-red-500';
-
-                  return (
-                    <button
-                      key={status}
-                      onClick={() => setSelectedOrder({ ...selectedOrder, status })}
-                      className={`px-3 py-1 rounded-md text-sm font-semibold 
-                        ${statusColors[status]} 
-                        ${isSelected ? `border-2 ${borderColorClass}` : 'border border-transparent'}
-                      `}
-                    >
-                      {status}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+        {modalLoading ? (
+          <div className="flex items-center justify-center py-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <p className="ml-3 text-gray-600">Cargando detalles del pedido...</p>
           </div>
+        ) : (
+          selectedOrder && (
+            <div className="p-2 text-gray-800">
+              <h4 className="text-xl font-bold mb-4 text-center">Detalles del Pedido</h4>
+
+              <div className="flex flex-col gap-4 mb-4">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-500">ID</p>
+                  <p className="font-bold text-black">{selectedOrder.id}</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-sm text-gray-500">Cliente</p>
+                    <p className="font-bold text-black">{selectedOrder.client}</p>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <p className="text-sm text-gray-500">Fecha</p>
+                    <p className="font-bold text-black">{new Date(selectedOrder.createdAt).toLocaleString()}</p>
+                  </div>
+                </div>
+
+                <div className="bg-red-100 bg-opacity-50 p-3 rounded-lg mb-4 text-center">
+                  <p className="text-sm text-red-800">Total</p>
+                  <p className="text-2xl font-bold text-red-800">S/ {selectedOrder.total.toFixed(2)}</p>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 p-3 rounded-lg mb-4">
+                <p className="text-sm text-gray-500 mb-2">Productos</p>
+                <ul className="list-disc list-inside">
+                  {selectedOrder.products.map((product, index) => (
+                    <li key={index} className="text-black">
+                      <span className="font-bold">{product.name}</span> (x{product.quantity})
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="flex flex-col items-center mt-4">
+                <p className="text-sm text-gray-500 mb-2">Cambiar Estado:</p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {Object.values(ORDER_STATUS).map((status) => {
+                    const isSelected = selectedOrder.status === status;
+                    const borderColorClass =
+                      status === ORDER_STATUS.PENDING ? 'border-orange-500' :
+                      status === ORDER_STATUS.PREPARING ? 'border-yellow-500' :
+                      status === ORDER_STATUS.DELIVERING ? 'border-blue-500' :
+                      status === ORDER_STATUS.DELIVERED ? 'border-green-500' :
+                      'border-red-500';
+
+                    return (
+                      <button
+                        key={status}
+                        onClick={() => handleStatusChange(status)}
+                        className={`px-3 py-1 rounded-md text-sm font-semibold
+                          ${statusColors[status]}
+                          ${isSelected ? `border-2 ${borderColorClass}` : 'border border-transparent'}
+                        `}
+                      >
+                        {status}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )
         )}
       </Modal>
     </div>
