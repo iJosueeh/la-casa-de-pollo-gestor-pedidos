@@ -5,6 +5,7 @@ import { useOrders } from '@/features/orders/hooks/useOrders';
 import { ORDER_STATUS, type Order, type OrderStatus } from '@/features/orders/types/order.types';
 import { getOrderDetails } from '@/features/orders/services/order.service';
 import { Button } from '@/shared/components/iu';
+import { formatDateLocal, formatDateTimeLocal } from '@/shared/utils/dateUtils';
 
 type PedidosRecientesProps = {
   title?: string;
@@ -76,7 +77,7 @@ export const PedidosRecientes: React.FC<PedidosRecientesProps> = ({
                   {order.id}
                 </th>
                 <td className="px-6 py-4">{order.client}</td>
-                <td className="px-6 py-4">{new Date(order.createdAt).toLocaleDateString()}</td>
+                <td className="px-6 py-4">{formatDateLocal(order.createdAt)}</td>
                 <td className="px-6 py-4">S/ {order.total.toFixed(2)}</td>
                 <td className="px-6 py-4">
                   <span className={`px-2 py-1 rounded-full text-xs ${statusColors[order.status]}`}>
@@ -152,7 +153,7 @@ export const PedidosRecientes: React.FC<PedidosRecientesProps> = ({
                   </div>
                   <div className="bg-gray-50 p-3 rounded-lg">
                     <p className="text-sm text-gray-500">Fecha</p>
-                    <p className="font-bold text-black">{new Date(selectedOrder.createdAt).toLocaleString()}</p>
+                    <p className="font-bold text-black">{formatDateTimeLocal(selectedOrder.createdAt)}</p>
                   </div>
                 </div>
 

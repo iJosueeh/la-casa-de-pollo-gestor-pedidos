@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { adminDashboardService } from "../services/adminDashboard.service";
 import type { DashboardSummary } from "../types/admin.types";
 
@@ -7,23 +7,23 @@ export const useDashboardSummary = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchDashboardSummary = async () => {
-      try {
-        setLoading(true);
-        const data = await adminDashboardService.getDashboardSummary();
-        setSummary(data);
-        setError(null);
-      } catch (err) {
-        setError("Failed to fetch dashboard summary.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboardSummary();
+  const fetchDashboardSummary = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await adminDashboardService.getDashboardSummary();
+      setSummary(data);
+      setError(null);
+    } catch (err) {
+      setError("Failed to fetch dashboard summary.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return { summary, loading, error };
+  useEffect(() => {
+    fetchDashboardSummary();
+  }, [fetchDashboardSummary]);
+
+  return { summary, loading, error, refetch: fetchDashboardSummary };
 };

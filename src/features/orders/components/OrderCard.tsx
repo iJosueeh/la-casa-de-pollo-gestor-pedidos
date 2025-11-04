@@ -4,6 +4,7 @@ import { Card } from '@/shared/components/iu';
 import { OrderTimeline } from './OrderTimeline';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { getOrderDetails } from '@/features/orders/services/order.service';
+import { formatDateTimeLocal } from '@/shared/utils/dateUtils';
 
 interface OrderCardProps {
   order: Order;
@@ -15,13 +16,6 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order: initialOrder }) => 
   const [loading, setLoading] = useState(false);
 
   const orderToDisplay = orderDetails || initialOrder;
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString('es-PE', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    });
-  };
 
   const handleToggleExpand = async () => {
     setIsExpanded(!isExpanded);
@@ -41,7 +35,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order: initialOrder }) => 
           <div className="md:col-span-1">
             <h3 className="font-bold text-xl mb-1">Pedido #{orderToDisplay.id.substring(0, 8)}</h3>
             <p className="text-sm text-gray-600">Cliente: {orderToDisplay.client}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{formatDate(orderToDisplay.createdAt)}</p>
+            <p className="text-xs text-gray-500 mt-0.5">{formatDateTimeLocal(orderToDisplay.createdAt)}</p>
           </div>
           <div className="md:col-span-2">
             <OrderTimeline currentStatus={orderToDisplay.status} />

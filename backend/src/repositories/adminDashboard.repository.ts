@@ -68,14 +68,18 @@ export const adminDashboardRepository = {
   },
 
   async getWeeklySalesSummary(): Promise<DailySalesData[]> {
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 6);
+
+    const todayISO = today.toISOString().split('T')[0];
     const sevenDaysAgoISO = sevenDaysAgo.toISOString().split('T')[0];
 
     const { data: pedidosData, error: pedidosError } = await supabase
       .from('pedido')
       .select('fecha, total')
       .gte('fecha', sevenDaysAgoISO)
+      .lte('fecha', todayISO)
       .order('fecha', { ascending: true });
 
     if (pedidosError) {
@@ -90,9 +94,9 @@ export const adminDashboardRepository = {
     });
 
     const result: DailySalesData[] = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 6; i >= 0; i--) {
       const date = new Date();
-      date.setDate(date.getDate() - (6 - i));
+      date.setDate(date.getDate() - i);
       const dayString = date.toISOString().split('T')[0];
       const dayName = date.toLocaleDateString('es-ES', { weekday: 'short' });
       result.push({
