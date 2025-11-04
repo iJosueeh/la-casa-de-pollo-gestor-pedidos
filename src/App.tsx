@@ -2,11 +2,13 @@ import './App.css'
 
 import React, { useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { Header, Sidebar } from "./shared/components/layout";
+import { AppHeader } from "./shared/components/layout/Header";
+import { AppSidebar } from "./shared/components/layout/Sidebar";
 
 import { Notification } from './shared/components/Notification';
 import { useNotificationContext } from './shared/context/NotificationContext';
-import { Outlet, Link, useNavigate } from "react-router-dom"; // 👈 aquí agregamos useNavigate
+import { Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "./shared/hooks/useAuth"; // Import useAuth
 
 
 function App() {
@@ -14,39 +16,51 @@ function App() {
   const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
   const { notification, hideNotification } = useNotificationContext();
   const navigate = useNavigate();
+  const { logout } = useAuth(); // Use the new useAuth hook
 
   // 🟡 Control del menú lateral
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+    console.log('toggleSidebar called, isSidebarOpen:', !isSidebarOpen);
   };
 
   const closeSidebar = () => {
     setIsSidebarOpen(false);
+    console.log('closeSidebar called');
   };
 
   // 🔐 Cierre de sesión
   const handleLogout = () => {
-    localStorage.removeItem('usuario');
-    navigate('/login');
+    logout(); // Use the logout function from useAuth
+    navigate('/login'); // Navigate after logout
   };
 
   return (
-    <div className="h-screen flex flex-col bg-yellow-50">
+    <div className="min-h-screen flex flex-col bg-white overflow-x-hidden">
       {/* 🐔 Encabezado */}
-      <Header onMenuClick={toggleSidebar} />
+      <AppHeader
+        onMenuClick={toggleSidebar}
+        className={`${isSidebarOpen && isDesktop ? "md:ml-56 md:w-[calc(100%-14rem)]" : ""}`}
+      />
 
       {/* 🟨 Cuerpo principal */}
-      <div className="flex flex-1">
+      <div className="flex flex-1 pt-16">
         {/* Sidebar lateral */}
-        <Sidebar
+        <AppSidebar
           isOpen={isSidebarOpen}
           onLinkClick={closeSidebar}
-          onLogoutClick={handleLogout} // aquí usamos el logout real
+          onLogoutClick={handleLogout}
+          isDesktop={isDesktop}
         />
 
         {/* Contenido dinámico */}
-        <main className="flex-1 p-6 bg-gray-50 transition-all duration-300">
-          <div className="flex flex-col items-center justify-center h-full w-full">
+        <main 
+          className={`flex-1 p-6 bg-gray-50 transition-all duration-300 overflow-y-auto min-h-[calc(100vh-4rem)] ${
+            isSidebarOpen && isDesktop ? "md:ml-56" : ""
+          }`}
+          onClick={() => !isDesktop && isSidebarOpen && closeSidebar()}
+        >
+          <div className="max-w-7xl mx-auto">
             <Outlet />
           </div>
         </main>

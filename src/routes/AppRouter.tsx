@@ -8,7 +8,7 @@ import OrdersPage from '../pages/OrdersPage';
 import { AdminPage } from '../pages/AdminPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import PrivateRoutes from "../routes/PrivateRoutes";
-import Login from '@/pages/login';
+import Login from '@/pages/Login';
 export const AppRouter = () => {
   return (
     <Router>

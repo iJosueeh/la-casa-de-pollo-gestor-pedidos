@@ -6,26 +6,32 @@ import cors from 'cors';
 // Load environment variables from the root .env file
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
-import productRoutes from './routes/product.routes';
-import orderRoutes from './routes/order.routes';
-import clientRoutes from './routes/client.routes'; // Import client routes
+import productRoutes from '@routes/product.routes';
+import categoryRoutes from '@routes/category.routes';
+import authRoutes from '@routes/auth.routes';
+import clientRoutes from '@routes/client.routes';
+import orderRoutes from '@routes/order.routes';
 
 const app = express();
-const PORT = process.env.PORT || 4000;
 
-// Middleware
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
 // Routes
 app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/clients', clientRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/clients', clientRoutes); // Mount client routes
 
 app.get('/', (req, res) => {
   res.send('Backend is running!');
 });
 
+const PORT = 4000;
+
 app.listen(PORT, () => {
   console.log(`Servidor Express escuchando en http://localhost:${PORT}`);
+  console.log('Backend started successfully!');
 });

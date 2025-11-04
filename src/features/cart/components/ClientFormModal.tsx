@@ -3,6 +3,15 @@ import { Modal } from '@/features/admin/components/Modal'; // Reusing the generi
 import { Input } from '@/shared/components/iu';
 import { Button } from '@/shared/components/iu';
 import { useNotificationContext } from '@/shared/context/NotificationContext';
+import { apiClient } from '@/shared/utils/apiClient';
+
+interface BackendClient {
+  idcliente: number;
+  nombre: string;
+  email: string;
+  telefono: string;
+  direccion: string;
+}
 
 interface ClientFormModalProps {
   isOpen: boolean;
@@ -17,43 +26,48 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
     email: '',
     telefono: '',
     direccion: '',
-    notas: '', // This will be the 'notas' for the order, not the client
+    notas: '',
   });
+  const [nombreError, setNombreError] = useState<string | undefined>(undefined);
+  const [emailError, setEmailError] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setClientDetails(prev => ({ ...prev, [name]: value }));
+    // Clear errors when input changes
+    if (name === 'nombre' && nombreError) setNombreError(undefined);
+    if (name === 'email' && emailError) setEmailError(undefined);
   };
 
   const handleConfirm = async () => {
-    if (!clientDetails.nombre || !clientDetails.email) {
-      showNotification('Nombre y Email del cliente son requeridos.', 'error');
-      return;
+    let hasError = false;
+    if (!clientDetails.nombre) {
+      setNombreError('El nombre del cliente es requerido.');
+      hasError = true;
+    } else {
+      setNombreError(undefined);
+    }
+    if (!clientDetails.email) {
+      setEmailError('El email del cliente es requerido.');
+      hasError = true;
+    } else {
+      setEmailError(undefined);
+    }
+
+    if (hasError) {
+      return; // Stop if there are validation errors
     }
 
     setIsLoading(true);
     try {
       // First, try to create the client
-      const response = await fetch('http://localhost:4000/api/clients', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombre: clientDetails.nombre,
-          email: clientDetails.email,
-          telefono: clientDetails.telefono,
-          direccion: clientDetails.direccion,
-        }),
+      const client = await apiClient.post<BackendClient>('/api/clients', {
+        nombre: clientDetails.nombre,
+        email: clientDetails.email,
+        telefono: clientDetails.telefono,
+        direccion: clientDetails.direccion,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al crear/buscar cliente');
-      }
-
-      const client = await response.json();
 
       // Now, pass the client info back to the parent component (CartView)
       onClientConfirmed({
@@ -64,7 +78,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
       });
       showNotification('Cliente confirmado con éxito.', 'success');
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error confirming client:', error);
       showNotification(error.message || 'Error al confirmar cliente.', 'error');
     } finally {
@@ -83,6 +97,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
             onChange={handleChange}
             placeholder="Ej: Juan Pérez"
             required
+            error={nombreError}
           />
         </div>
         <div className="mb-4">
@@ -94,6 +109,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
             onChange={handleChange}
             placeholder="Ej: juan.perez@example.com"
             required
+            error={emailError}
           />
         </div>
         <div className="mb-4">
@@ -126,7 +142,8 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
         <Button
           onClick={handleConfirm}
           disabled={isLoading}
-          className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+          gradient={true}
+          className="w-full font-bold py-2 px-4 rounded"
         >
           {isLoading ? 'Confirmando...' : 'Confirmar Cliente y Pedido'}
         </Button>

@@ -3,6 +3,9 @@ import { Menu } from "lucide-react";
 import { Button } from "@/shared/components/iu";
 import { useLocation } from "react-router-dom";
 
+// No-op comment to force re-processing
+
+
 const getTitle = (pathname: string) => {
   switch (pathname) {
     case "/":
@@ -22,18 +25,25 @@ const getTitle = (pathname: string) => {
   }
 };
 
-export const Header: React.FC<{ onMenuClick: () => void }> = ({ onMenuClick }) => {
+export const AppHeader: React.FC<{ onMenuClick: () => void; className?: string }> = ({ onMenuClick, className }) => {
   const location = useLocation();
   const title = getTitle(location.pathname);
 
   return (
-    <header className="relative flex items-center justify-center bg-gray-50 px-6 py-3 shadow-md z-10">
-      <div className="absolute left-6">
-        <Button onClick={onMenuClick} variant="secondary" className="mr-4">
+    <header className={`fixed top-0 left-0 right-0 flex items-center bg-gray-50 px-4 sm:px-6 h-16 shadow-md z-30 ${className}`}>
+      <div className="w-full max-w-7xl mx-auto flex items-center">
+        <Button 
+          onClick={onMenuClick} 
+          variant="secondary" 
+          className="p-2 mr-4 md:mr-6"
+          aria-label="Menú"
+        >
           <Menu className="h-6 w-6 text-gray-800" />
         </Button>
+        <h1 className="text-gray-800 font-bold text-base sm:text-lg grow text-center md:text-left">
+          {title}
+        </h1>
       </div>
-      <h1 className="text-gray-800 font-bold text-xl">{title}</h1>
     </header>
   );
 };

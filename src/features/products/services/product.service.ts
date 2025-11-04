@@ -1,14 +1,20 @@
 import type { Product } from "@/features/products/types/product.types";
+import { apiClient } from "@/shared/utils/apiClient"; // Import apiClient
 
-const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL || "http://localhost:4000";
+interface BackendProduct {
+  idproducto: number;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  stock: number;
+  imageUrl?: string;
+}
 
-export const getProductos = async (): Promise<Product[]> => {
+export const getProductos = async (categoryId?: string): Promise<BackendProduct[]> => {
   try {
-    const response = await fetch(`${BACKEND_API_URL}/api/products`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data: Product[] = await response.json();
+    const data = await apiClient.get<BackendProduct[]>("/api/products", {
+      params: { categoryId },
+    });
     return data;
   } catch (error: unknown) {
     console.error("Error al obtener productos del backend:", error instanceof Error ? error.message : error);

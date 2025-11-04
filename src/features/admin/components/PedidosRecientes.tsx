@@ -127,8 +127,7 @@ export const PedidosRecientes: React.FC<PedidosRecientesProps> = ({
             <div className="flex flex-col items-center mt-4">
               <p className="text-sm text-gray-500 mb-2">Cambiar Estado:</p>
               <div className="flex flex-wrap justify-center gap-2">
-                {Object.keys(statusColors).map((statusKey) => {
-                  const status = statusKey as OrderStatus;
+                {Object.values(ORDER_STATUS).map((status) => {
                   const isSelected = selectedOrder.status === status;
                   const borderColorClass =
                     status === 'Pendiente' ? 'border-orange-500' :

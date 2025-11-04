@@ -1,8 +1,23 @@
 import { supabase } from '@config/supabase';
 import { Pedido, DetallePedido } from '@backendTypes/order.types';
 
+interface CreatePedidoPayload {
+  idcliente: number;
+  idusuario: number;
+  nombrecliente: string;
+  direccion?: string;
+  notas?: string;
+  estado: string;
+  total: number;
+}
+
+interface ProductDetailFromJoin {
+  nombre: string;
+  precio: number;
+}
+
 export const orderRepository = {
-  async createOrder(orderData: Omit<Pedido, 'idpedido' | 'fecha' | 'total'> & { total: number }): Promise<Pedido> {
+  async createOrder(orderData: CreatePedidoPayload): Promise<Pedido> {
     const { data, error } = await supabase
       .from('pedido')
       .insert({
@@ -11,7 +26,7 @@ export const orderRepository = {
         nombrecliente: orderData.nombrecliente, // Corrected to nombrecliente
         direccion: orderData.direccion,
         notas: orderData.notas,
-        estado: orderData.estado,
+        estado: 'pendiente', // Default status
         total: orderData.total,
       })
       .select()
@@ -25,7 +40,6 @@ export const orderRepository = {
   },
 
   async createOrderDetails(orderDetails: Omit<DetallePedido, 'iddetalle'>[]): Promise<DetallePedido[]> {
-    console.log('Order details to create:', orderDetails);
     const { data, error } = await supabase
       .from('detallepedido')
       .insert(orderDetails)
@@ -55,7 +69,7 @@ export const orderRepository = {
     return data as Pedido[];
   },
 
-  async getOrderById(orderId: number): Promise<Pedido & { products: any[] } | null> {
+  async getOrderById(orderId: number): Promise<Pedido & { products: { idproducto: number; name: string; quantity: number; price: number; subtotal: number }[] } | null> {
     console.log('Fetching order details for orderId:', orderId);
     const { data: orderData, error: orderError } = await supabase
       .from('pedido')
@@ -71,25 +85,48 @@ export const orderRepository = {
     const { data: detailsData, error: detailsError } = await supabase
       .from('detallepedido')
       .select(`
+        iddetalle,
+        idpedido,
+        idproducto,
         cantidad,
-        subtotal,
-        producto (nombre, precio)
+        subtotal
       `)
       .eq('idpedido', orderId);
 
+    console.log('Raw detailsData from Supabase:', detailsData);
+    console.log('Raw detailsError from Supabase:', detailsError);
+
     if (detailsError) {
       console.error(`Error fetching order details for order id ${orderId}:`, detailsError);
-      throw new Error('Could not fetch order details');
+      return null;
     }
 
-    console.log('detailsData from Supabase (with product join):', detailsData);
+    // Extract unique product IDs
+    const productIds = [...new Set(detailsData.map(detail => detail.idproducto))];
 
-    const products = detailsData.map(detail => {
-      const product = detail.producto as any; // Cast to any to bypass TypeScript error
+    // Fetch product names and prices separately
+    const { data: productsData, error: productsError } = await supabase
+      .from('producto')
+      .select('idproducto, nombre, precio')
+      .in('idproducto', productIds);
+
+    if (productsError) {
+      console.error(`Error fetching product details for order id ${orderId}:`, productsError);
+      return null;
+    }
+
+    const productMap = new Map<number, ProductDetailFromJoin>();
+    productsData.forEach(p => {
+      productMap.set(p.idproducto, { nombre: p.nombre, precio: p.precio });
+    });
+
+    const products = detailsData.map((detail: DetallePedido) => {
+      const productInfo = productMap.get(detail.idproducto) || { nombre: 'Unknown', precio: 0 };
       return {
-        name: product.nombre,
+        idproducto: detail.idproducto,
+        name: productInfo.nombre,
         quantity: detail.cantidad,
-        price: product.precio,
+        price: productInfo.precio,
         subtotal: detail.subtotal,
       };
     });

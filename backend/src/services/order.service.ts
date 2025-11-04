@@ -1,6 +1,13 @@
 import { orderRepository } from '@repositories/order.repository';
 import { CreateOrderPayload, Pedido, DetallePedido } from '@backendTypes/order.types';
 
+interface OrderProduct {
+  idproducto: number;
+  name: string;
+  quantity: number;
+  price: number;
+}
+
 export const orderService = {
   async processNewOrder(payload: CreateOrderPayload): Promise<Pedido> {
     const { clientId, userId, nombrecliente, direccion, notas, items } = payload;
@@ -38,7 +45,7 @@ export const orderService = {
     return orders;
   },
 
-  async getOrderDetails(orderId: number): Promise<Pedido & { products: any[] } | null> {
+  async getOrderDetails(orderId: number): Promise<Pedido & { products: OrderProduct[] } | null> {
     return orderRepository.getOrderById(orderId);
   },
 };

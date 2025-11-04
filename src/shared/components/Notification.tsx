@@ -45,17 +45,17 @@ export const Notification: React.FC<NotificationProps> = ({ show, message, type,
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+          <div className={`pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg shadow-xl border ${bgColor} border-opacity-60`}>
             <div className="p-4">
               <div className="flex items-start">
                 <div className="flex-shrink-0">{icon}</div>
                 <div className="ml-3 w-0 flex-1 pt-0.5">
-                  <p className="text-sm font-medium text-gray-900">{message}</p>
+                  <p className={`text-sm font-medium ${textColor}`}>{message}</p>
                 </div>
                 <div className="ml-4 flex flex-shrink-0">
                   <button
                     type="button"
-                    className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="p-1 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     onClick={onClose}
                   >
                     <span className="sr-only">Close</span>

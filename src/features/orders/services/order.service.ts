@@ -1,9 +1,6 @@
 import type { Order, OrderStatus } from '../types';
 import type { CartItem } from '@/features/cart/types';
-import { supabase } from '@/config/supabase'; // Import supabase for existing functions
-
-const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL || "http://localhost:4000";
-const TABLA_PEDIDOS = 'pedido'; // Define table name here
+import { apiClient } from '@/shared/utils/apiClient'; // Import apiClient
 
 interface CreateOrderFrontendPayload {
   clientId: number;
@@ -12,6 +9,25 @@ interface CreateOrderFrontendPayload {
   direccion?: string;
   notas?: string;
   items: Array<{ productId: number; quantity: number; price: number }>;
+}
+
+interface BackendProduct {
+  idproducto: number;
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+interface BackendOrder {
+  idpedido: number;
+  nombrecliente: string;
+  total: number;
+  fecha: string;
+  estado: OrderStatus;
+}
+
+interface BackendOrderDetails extends BackendOrder {
+  products: BackendProduct[];
 }
 
 export const createOrder = async (cartItems: CartItem[], clientInfo: { clientId: number; nombrecliente: string; direccion?: string; notas?: string }): Promise<Order | null> => {
@@ -29,21 +45,7 @@ export const createOrder = async (cartItems: CartItem[], clientInfo: { clientId:
       })),
     };
 
-    const response = await fetch(`${BACKEND_API_URL}/api/orders`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('❌ Error al crear pedido en el backend:', errorData);
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data: Order = await response.json();
+    const data = await apiClient.post<Order>("/api/orders", payload);
     return data;
   } catch (error: unknown) {
     console.error('❌ Error al crear pedido:', error instanceof Error ? error.message : error);
@@ -53,26 +55,19 @@ export const createOrder = async (cartItems: CartItem[], clientInfo: { clientId:
 
 export const getOrders = async (statusFilter?: OrderStatus): Promise<Order[]> => {
   try {
-    const url = new URL(`${BACKEND_API_URL}/api/orders`);
-    if (statusFilter) {
-      url.searchParams.append('status', statusFilter);
-    }
-
-    const response = await fetch(url.toString());
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const backendOrders: any[] = await response.json(); // Use 'any' for raw backend response
+    const backendOrders = await apiClient.get<BackendOrder[]>("/api/orders", {
+      params: { status: statusFilter },
+    });
 
     // Map backend Pedido type to frontend Order type
     const mappedOrders: Order[] = backendOrders.map(bOrder => ({
-      id: bOrder.idpedido.toString(), // Convert number to string
-      client: bOrder.nombrecliente, // Map nombrecliente to client
+      id: bOrder.idpedido.toString(),
+      client: bOrder.nombrecliente,
       total: bOrder.total,
-      createdAt: bOrder.fecha, // Map fecha to createdAt
-      status: bOrder.estado, // Map estado to status
-      products: [], // Placeholder: Backend currently doesn't return products directly with Pedido
-      paymentMethod: "Efectivo", // Placeholder: Backend currently doesn't return paymentMethod directly with Pedido
+      createdAt: bOrder.fecha,
+      status: bOrder.estado,
+      products: [], // BackendOrder does not contain product details
+      paymentMethod: "Efectivo", // Placeholder as BackendOrder does not contain payment method
     }));
 
     return mappedOrders;
@@ -84,11 +79,8 @@ export const getOrders = async (statusFilter?: OrderStatus): Promise<Order[]> =>
 
 export const getOrderDetails = async (orderId: string): Promise<Order | null> => {
   try {
-    const response = await fetch(`${BACKEND_API_URL}/api/orders/${orderId}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const orderDetails: any = await response.json();
+    const orderDetails = await apiClient.get<BackendOrderDetails>(`/api/orders/${orderId}`);
+    console.log('Raw orderDetails from API client:', orderDetails);
 
     const mappedOrder: Order = {
       id: orderDetails.idpedido.toString(),
@@ -96,7 +88,7 @@ export const getOrderDetails = async (orderId: string): Promise<Order | null> =>
       total: orderDetails.total,
       createdAt: orderDetails.fecha,
       status: orderDetails.estado,
-      products: orderDetails.products.map((p: any) => ({ id: p.name, name: p.name, quantity: p.quantity, price: p.price })),
+      products: orderDetails.products.map((p: BackendProduct) => ({ id: p.idproducto.toString(), name: p.name, quantity: p.quantity, price: p.price })),
       paymentMethod: "Efectivo",
     };
 

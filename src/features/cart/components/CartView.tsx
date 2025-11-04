@@ -46,7 +46,7 @@ export const CartView = () => {
         } else {
           showNotification("Error al confirmar el pedido.", "error");
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Error confirming order:", error);
         showNotification("Error al confirmar el pedido.", "error");
       }
@@ -84,7 +84,7 @@ export const CartView = () => {
                                 >
                                     <div className="bg-linear-to-br from-red-100 to-orange-100 w-20 h-20 rounded-lg flex items-center justify-center text-4xl">
                                         <img
-                                            src={item.image}
+                                            src={item.imageUrl}
                                             alt={item.name}
                                             className="w-full h-full object-cover rounded-lg"
                                         />

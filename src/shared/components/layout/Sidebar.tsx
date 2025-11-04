@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Menu, ShoppingCart, ClipboardList, UserCog } from "lucide-react";
+import { Menu, ShoppingCart, ClipboardList, UserCog, X } from "lucide-react"; // Import X icon
+import { Button } from "@/shared/components/iu"; // Import Button component
 
 const links = [
   { to: "/", text: "Menú", icon: Menu },
@@ -9,10 +10,19 @@ const links = [
   { to: "/admin", text: "Admin", icon: UserCog },
 ];
 
-export const Sidebar: React.FC<{ isOpen: boolean; onLinkClick: () => void; onLogoutClick: () => void }> = ({ isOpen, onLinkClick, onLogoutClick }) => {
+export const AppSidebar: React.FC<{ isOpen: boolean; onLinkClick: () => void; onLogoutClick: () => void; isDesktop: boolean }> = ({ isOpen, onLinkClick, onLogoutClick, isDesktop }) => {
   return (
     <div
-      className={`fixed top-16 inset-y-0 left-0 w-full bg-white border-r border-gray-200 p-4 transition-transform transform ${isOpen ? "translate-x-0" : "-translate-x-full"} md:w-56 flex flex-col justify-between`}>
+      className={`p-6 z-40 transition-all duration-300 ease-in-out bg-white flex flex-col justify-between h-screen fixed md:static md:h-auto
+        ${isOpen ? "w-64 translate-x-0" : "-translate-x-full md:translate-x-0"}
+        ${isDesktop ? "w-56" : "w-64"}
+        ${!isDesktop && !isOpen ? "hidden" : ""}
+      `}>
+      <div className="absolute top-4 right-4 md:hidden">
+        <Button onClick={onLinkClick} variant="secondary" className="p-2">
+          <X className="h-5 w-5 text-gray-800" />
+        </Button>
+      </div>
       <nav className="flex flex-col gap-2">
         {links.map((link) => (
           <NavLink
@@ -20,7 +30,7 @@ export const Sidebar: React.FC<{ isOpen: boolean; onLinkClick: () => void; onLog
             to={link.to}
             onClick={onLinkClick}
             className={({ isActive }) =>
-              `flex items-center px-4 py-2 rounded-md text-sm font-medium ${
+              `flex items-center px-6 py-2 rounded-md text-sm font-medium ${
                 isActive
                   ? "bg-linear-to-r from-red-500 to-orange-500 text-white"
                   : "text-gray-700 hover:bg-gray-100"
@@ -35,7 +45,7 @@ export const Sidebar: React.FC<{ isOpen: boolean; onLinkClick: () => void; onLog
       <div className="mt-auto">
         <button
           onClick={onLogoutClick}
-          className="w-full px-4 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
+          className="w-full px-6 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100"
         >
           Cerrar Sesión
         </button>
