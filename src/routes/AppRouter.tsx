@@ -8,15 +8,15 @@ import OrdersPage from '../pages/OrdersPage';
 import { AdminPage } from '../pages/AdminPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import PrivateRoutes from "../routes/PrivateRoutes";
-import Login from '@/pages/login';
+import Login from '@/pages/Login';
 export const AppRouter = () => {
   return (
     <Router>
       <Routes>
-        {/* 🔓 Ruta pública */}
+        {/*  Ruta pública */}
         <Route path="/login" element={<Login />} />
 
-        {/* 🔒 Rutas protegidas */}
+        {/*  Rutas protegidas */}
         <Route
           path="/"
           element={

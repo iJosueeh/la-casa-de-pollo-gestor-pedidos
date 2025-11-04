@@ -2,8 +2,8 @@ import { Product } from '@backendTypes/product.types';
 import { productRepository } from '@repositories/product.repository';
 
 export const productService = {
-  async listAllProducts(): Promise<Product[]> {
-    const products = await productRepository.getAll();
+  async listAllProducts(categoryId?: string): Promise<Product[]> {
+    const products = await productRepository.getAll(categoryId);
     return products;
   },
 

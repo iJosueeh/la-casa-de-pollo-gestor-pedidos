@@ -13,6 +13,22 @@ const STATUS_SEQUENCE: OrderStatus[] = [
   ORDER_STATUS.DELIVERED,
 ];
 
+const statusBackgroundColors = {
+  [ORDER_STATUS.PENDING]: 'bg-orange-500',
+  [ORDER_STATUS.PREPARING]: 'bg-yellow-500',
+  [ORDER_STATUS.DELIVERING]: 'bg-blue-500',
+  [ORDER_STATUS.DELIVERED]: 'bg-green-500',
+  [ORDER_STATUS.CANCELED]: 'bg-red-500', 
+};
+
+const statusTextColors = {
+  [ORDER_STATUS.PENDING]: 'text-orange-600',
+  [ORDER_STATUS.PREPARING]: 'text-yellow-600',
+  [ORDER_STATUS.DELIVERING]: 'text-blue-600',
+  [ORDER_STATUS.DELIVERED]: 'text-green-600',
+  [ORDER_STATUS.CANCELED]: 'text-red-600',
+};
+
 export const OrderTimeline: React.FC<OrderTimelineProps> = ({ currentStatus }) => {
   const currentStatusIndex = STATUS_SEQUENCE.indexOf(currentStatus);
 
@@ -30,24 +46,30 @@ export const OrderTimeline: React.FC<OrderTimelineProps> = ({ currentStatus }) =
         const isCompleted = index < currentStatusIndex;
         const isCurrent = index === currentStatusIndex;
 
+        const circleBgClass = isCompleted
+          ? 'bg-green-500'
+          : isCurrent
+            ? statusBackgroundColors[status]
+            : 'bg-gray-300';
+
+        const textClass = isCurrent
+          ? statusTextColors[status]
+          : 'text-gray-500';
+
         return (
           <React.Fragment key={status}>
             <div className="flex flex-col items-center">
               <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-white transition-colors duration-300 ${
-                  isCompleted || isCurrent ? 'bg-green-500' : 'bg-gray-300'
-                }`}>
+                className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-white text-xs sm:text-sm transition-colors duration-300 ${circleBgClass}`}>
                 {isCompleted ? '✓' : index + 1}
               </div>
-              <p className={`mt-1 font-medium ${isCurrent ? 'text-blue-600' : 'text-gray-500'}`}>
+              <p className={`mt-1 text-[0.6rem] sm:text-xs font-medium ${textClass}`}>
                 {status}
-              </p>
-            </div>
+              </p>            </div>
             {index < STATUS_SEQUENCE.length - 1 && (
               <div
-                className={`flex-1 h-1 mx-2 transition-colors duration-300 ${
-                  isCompleted ? 'bg-green-500' : 'bg-gray-300'
-                }`}
+                className={`flex-1 h-1 mx-2 transition-colors duration-300 ${isCompleted ? 'bg-green-500' : 'bg-gray-300'
+                  }`}
               />
             )}
           </React.Fragment>
