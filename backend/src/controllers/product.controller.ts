@@ -4,7 +4,8 @@ import { productService } from '@services/product.service';
 export const productController = {
   async getProducts(req: Request, res: Response): Promise<void> {
     try {
-      const products = await productService.listAllProducts();
+      const categoryId = req.query.categoryId as string | undefined;
+      const products = await productService.listAllProducts(categoryId);
       res.json(products);
     } catch (error: unknown) {
       console.error('Error en productController.getProducts:', error instanceof Error ? error.message : error);
