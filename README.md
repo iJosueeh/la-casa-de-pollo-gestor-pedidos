@@ -1,73 +1,142 @@
-# React + TypeScript + Vite
+# 🍗 La Casa de Pollo - Gestor de Pedidos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema de gestión de pedidos para restaurante desarrollado con React, TypeScript y Supabase.
 
-Currently, two official plugins are available:
+## 📋 Descripción
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Aplicación web moderna para la gestión integral de pedidos de restaurante, que incluye funcionalidades de administración, catálogo de productos, carrito de compras y seguimiento de órdenes.
 
-## React Compiler
+## ✨ Características
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 🔐 **Autenticación de usuarios** con Supabase
+- 🛒 **Carrito de compras** con gestión de productos
+- 📦 **Gestión de pedidos** en tiempo real
+- 👨‍💼 **Panel de administración** completo
+- 📱 **Diseño responsive** para móviles y tablets
+- 📊 **Visualización de datos** con gráficos (Recharts)
+- 🎨 **UI moderna** con Tailwind CSS y Headless UI
 
-## Expanding the ESLint configuration
+## 🛠️ Stack Tecnológico
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Frontend
+- **React 19.2** - Biblioteca de interfaz de usuario
+- **TypeScript** - Tipado estático
+- **Vite** - Build tool y dev server
+- **React Router DOM** - Enrutamiento
+- **Redux Toolkit** - Gestión de estado
+- **Tailwind CSS** - Estilos utilitarios
+- **Headless UI** - Componentes accesibles
+- **Heroicons & Lucide React** - Iconografía
+- **Recharts** - Visualización de datos
+- **Supabase** - Backend as a Service
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Backend
+- **Node.js** con **Express**
+- **TypeScript**
+- **Supabase** - Base de datos y autenticación
+- **CORS** - Configuración de seguridad
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 📁 Estructura del Proyecto
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+la-casa-de-pollo-gestor-pedidos/
+├── src/
+│   ├── features/          # Características por módulo
+│   │   ├── admin/
+│   │   ├── auth/
+│   │   ├── cart/
+│   │   ├── orders/
+│   │   └── products/
+│   ├── pages/             # Páginas de la aplicación
+│   ├── shared/            # Componentes y utilidades compartidas
+│   ├── store/             # Configuración de Redux
+│   ├── routes/            # Configuración de rutas
+│   └── config/            # Configuraciones generales
+├── backend/               # API backend
+│   └── src/
+└── public/               # Archivos estáticos
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Instalación y Configuración
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerrequisitos
+- Node.js (versión 18 o superior)
+- npm o yarn
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Instalación Frontend
+
+```bash
+# Instalar dependencias
+npm install
+
+# Modo desarrollo
+npm run dev
+
+# Build para producción
+npm run build
+
+# Vista previa del build
+npm run preview
+
+# Ejecutar linter
+npm run lint
 ```
+
+### Instalación Backend
+
+```bash
+cd backend
+
+# Instalar dependencias
+npm install
+
+# Modo desarrollo
+npm run dev
+```
+
+### Variables de Entorno
+
+Crear un archivo `.env` en la raíz del proyecto con las siguientes variables:
+
+```env
+VITE_SUPABASE_URL=tu_supabase_url
+VITE_SUPABASE_ANON_KEY=tu_supabase_anon_key
+```
+
+## 📄 Scripts Disponibles
+
+### Frontend
+- `npm run dev` - Inicia el servidor de desarrollo
+- `npm run build` - Compila la aplicación para producción
+- `npm run preview` - Vista previa del build de producción
+- `npm run lint` - Ejecuta el linter de ESLint
+
+### Backend
+- `npm run dev` - Inicia el servidor backend con nodemon
+
+## 🎯 Páginas Principales
+
+- **Login** - Autenticación de usuarios
+- **Productos** - Catálogo de productos disponibles
+- **Carrito** - Gestión del carrito de compras
+- **Pedidos** - Historial y seguimiento de órdenes
+- **Admin** - Panel de administración
+
+## 🔧 Tecnologías de Desarrollo
+
+- ESLint - Linting de código
+- TypeScript ESLint - Reglas específicas para TypeScript
+- PostCSS - Procesamiento de CSS
+- Autoprefixer - Prefijos automáticos de CSS
+
+## 📝 Licencia
+
+Proyecto privado - Todos los derechos reservados
+
+## 👥 Contribución
+
+Este es un proyecto privado. Para contribuir, contacta con el equipo de desarrollo.
+
+---
+
+Desarrollado con ❤️ para La Casa de Pollo
