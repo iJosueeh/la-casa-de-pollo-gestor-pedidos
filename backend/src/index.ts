@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import cors from 'cors';
 
-// Load environment variables from the root .env file
+
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 import productRoutes from '@routes/product.routes';
@@ -15,11 +15,11 @@ import adminDashboardRoutes from '@routes/adminDashboard.routes';
 
 const app = express();
 
-// Middlewares
+
 app.use(cors());
 app.use(express.json());
 
-// Routes
+
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/auth', authRoutes);

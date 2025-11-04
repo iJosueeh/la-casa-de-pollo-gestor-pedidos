@@ -2,14 +2,14 @@
 import React from 'react';
 import { Drumstick, Soup, Coffee, PlusCircle } from 'lucide-react';
 import { useMostSoldProducts } from '../hooks/useMostSoldProducts';
-import type { MostSoldProduct } from '../types/admin.types';
+
 
 const productIcons: Record<string, React.ElementType> = {
   'Pollo a la Brasa': Drumstick,
   'Combos': Soup, 
   'Bebidas': Coffee,
   'Adicionales': PlusCircle,
-  'Unknown': PlusCircle, // Fallback for unknown categories
+  'Unknown': PlusCircle, 
 };
 
 type ProductosMasVendidosProps = {

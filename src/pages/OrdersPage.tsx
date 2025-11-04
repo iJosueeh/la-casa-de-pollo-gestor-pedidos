@@ -7,7 +7,7 @@ import { Button } from '@/shared/components/iu';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const statusFilters: (OrderStatus | undefined)[] = [
-  undefined, // All
+  undefined, 
   ORDER_STATUS.PENDING,
   ORDER_STATUS.PREPARING,
   ORDER_STATUS.DELIVERING,

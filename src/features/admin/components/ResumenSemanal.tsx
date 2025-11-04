@@ -1,10 +1,10 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useWeeklySalesSummary } from '../hooks/useWeeklySalesSummary';
-import type { DailySalesData } from '../types/admin.types';
+
 
 interface ResumenSemanalProps {
-  // No longer needs a data prop as it fetches its own
+  
 }
 
 export const ResumenSemanal: React.FC<ResumenSemanalProps> = () => {

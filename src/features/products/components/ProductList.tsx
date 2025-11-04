@@ -1,6 +1,5 @@
 import React from 'react';
 import { ProductCard } from './ProductCard';
-import type { Product } from '@/features/products/types/product.types';
 import { useProducts } from "../hooks/useProducts";
 
 interface ProductListProps {

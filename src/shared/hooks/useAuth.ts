@@ -7,7 +7,7 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored user in localStorage on initial load
+    
     const storedUser = localStorage.getItem('usuario');
     if (storedUser) {
       setUsuario(JSON.parse(storedUser));
@@ -26,7 +26,7 @@ export const useAuth = () => {
       console.error('Login failed:', error);
       setUsuario(null);
       localStorage.removeItem('usuario');
-      throw error; // Re-throw to be handled by UI
+      throw error; 
     } finally {
       setLoading(false);
     }
@@ -35,7 +35,7 @@ export const useAuth = () => {
   const logout = useCallback(() => {
     setUsuario(null);
     localStorage.removeItem('usuario');
-    // Optionally, call a logout API endpoint here if needed
+    
   }, []);
 
   return { usuario, loading, login, logout };

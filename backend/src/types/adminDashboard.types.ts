@@ -3,7 +3,7 @@ export interface MostSoldProduct {
   name: string;
   category: string;
   salesAmount: number;
-  percentage?: number; // Optional, can be calculated on frontend
+  percentage?: number; 
 }
 
 export interface DailySalesData {

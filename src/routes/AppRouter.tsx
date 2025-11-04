@@ -13,10 +13,10 @@ export const AppRouter = () => {
   return (
     <Router>
       <Routes>
-        {/* 🔓 Ruta pública */}
+        {/*  Ruta pública */}
         <Route path="/login" element={<Login />} />
 
-        {/* 🔒 Rutas protegidas */}
+        {/*  Rutas protegidas */}
         <Route
           path="/"
           element={

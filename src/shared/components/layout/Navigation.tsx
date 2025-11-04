@@ -61,7 +61,7 @@ export const Navigation: React.FC = () => {
               </div>
             </HamburgerMenu>
 
-            {/* Logo o título */}
+           
             <NavLink to="/" className="ml-4 text-xl font-bold text-gray-900">
               La Casa del Pollo
             </NavLink>

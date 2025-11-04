@@ -1,9 +1,9 @@
 import { TarjetaDashboard, PedidosRecientes, ProductosMasVendidos, ResumenSemanal  } from '@/features/admin/components';
 import React from 'react';
-import { useDashboardSummary } from '@/features/admin/hooks/useDashboardSummary'; // Import the new hook
+import { useDashboardSummary } from '@/features/admin/hooks/useDashboardSummary'; 
 
 export const AdminPage = () => {
-  const { summary, loading, error } = useDashboardSummary(); // Use the new hook
+  const { summary, loading, error } = useDashboardSummary(); 
 
   if (loading) {
     return (
@@ -21,16 +21,16 @@ export const AdminPage = () => {
     );
   }
 
-  // Helper to format percentage
+
   const formatPercentage = (value: number) => `${value.toFixed(2)}%`;
 
-  // Helper to calculate and format comparison footer
+
   const getComparisonFooter = (todayValue: number, yesterdayValue: number, unit: string = '', isCurrency: boolean = false) => {
     const formatValue = (value: number) => {
       if (isCurrency) {
         return `S/ ${value.toFixed(2)}`;
       }
-      return value.toFixed(0); // Round to whole number for non-currency
+      return value.toFixed(0); 
     };
 
     if (yesterdayValue === 0) {
@@ -41,8 +41,8 @@ export const AdminPage = () => {
     const percentage = (difference / yesterdayValue) * 100;
     const sign = percentage >= 0 ? '+' : '';
 
-    // If the difference is very small, just show 0%
-    if (Math.abs(percentage) < 0.5) { // Less than 0.5% difference, show 0%
+    
+    if (Math.abs(percentage) < 0.5) { 
       return `0% que ayer`;
     }
 
@@ -73,7 +73,7 @@ export const AdminPage = () => {
         <TarjetaDashboard
           title="Tasa de cancelación"
           value={formatPercentage(summary?.cancellationRate || 0)}
-          footer="De todas las ventas" // Static footer as requested
+          footer="De todas las ventas" 
           color="white"
         />
       </div>

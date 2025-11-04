@@ -34,7 +34,6 @@ export const PedidosRecientes: React.FC<PedidosRecientesProps> = ({
       setSelectedOrder(details);
     } catch (err) {
       console.error('Error fetching order details for modal:', err);
-      // Optionally show an error notification
     } finally {
       setModalLoading(false);
     }
@@ -48,7 +47,6 @@ export const PedidosRecientes: React.FC<PedidosRecientesProps> = ({
   const handleStatusChange = async (newStatus: OrderStatus) => {
     if (selectedOrder) {
       await updateStatus(selectedOrder.id, newStatus);
-      // Update the local selectedOrder state to reflect the change immediately
       setSelectedOrder(prev => prev ? { ...prev, status: newStatus } : null);
     }
   };

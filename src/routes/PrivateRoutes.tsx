@@ -6,7 +6,7 @@ export default function PrivateRoutes({ children }: { children: React.ReactNode 
   const { usuario, loading } = useAuth();
 
   if (loading) {
-    // Optional: You can return a loading spinner here
+    
     return <div>Cargando...</div>;
   }
 

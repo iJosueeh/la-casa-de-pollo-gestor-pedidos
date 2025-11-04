@@ -18,7 +18,7 @@ const statusBackgroundColors = {
   [ORDER_STATUS.PREPARING]: 'bg-yellow-500',
   [ORDER_STATUS.DELIVERING]: 'bg-blue-500',
   [ORDER_STATUS.DELIVERED]: 'bg-green-500',
-  [ORDER_STATUS.CANCELED]: 'bg-red-500', // Although canceled has a special rendering
+  [ORDER_STATUS.CANCELED]: 'bg-red-500', 
 };
 
 const statusTextColors = {

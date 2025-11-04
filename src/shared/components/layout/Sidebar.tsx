@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Menu, ShoppingCart, ClipboardList, UserCog, X } from "lucide-react"; // Import X icon
-import { Button } from "@/shared/components/iu"; // Import Button component
+import { Menu, ShoppingCart, ClipboardList, UserCog, X } from "lucide-react"; 
+import { Button } from "@/shared/components/iu"; 
 
 const links = [
   { to: "/", text: "Menú", icon: Menu },

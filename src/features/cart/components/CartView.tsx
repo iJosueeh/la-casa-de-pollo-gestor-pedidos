@@ -6,14 +6,14 @@ import { createOrder } from '@/features/orders/services';
 import { useNotificationContext } from '@/shared/context/NotificationContext';
 import { clearCart } from '../store/cartSlice';
 import { useDispatch } from 'react-redux';
-import { ClientFormModal } from './ClientFormModal'; // Import the new modal
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { ClientFormModal } from './ClientFormModal'; 
+import { useNavigate } from "react-router-dom"; 
 
 export const CartView = () => {
     const { cartItems, addProduct, removeProduct } = useCart();
     const { showNotification } = useNotificationContext();
     const dispatch = useDispatch();
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate(); 
 
     const [isClientModalOpen, setIsClientModalOpen] = useState(false);
 
@@ -35,16 +35,16 @@ export const CartView = () => {
         showNotification("El carrito está vacío, no se puede confirmar el pedido.", "info");
         return;
       }
-      setIsClientModalOpen(true); // Open the client form modal
+      setIsClientModalOpen(true); 
     };
 
     const handleClientConfirmed = async (clientInfo: { clientId: number; nombrecliente: string; direccion?: string; notas?: string }) => {
       try {
-        // Now that we have clientInfo, proceed with order creation
+        
         const order = await createOrder(cartItems, clientInfo);
         if (order) {
           showNotification("Pedido confirmado con éxito!", "success");
-          dispatch(clearCart()); // Clear the cart after successful order
+          dispatch(clearCart()); 
         } else {
           showNotification("Error al confirmar el pedido.", "error");
         }

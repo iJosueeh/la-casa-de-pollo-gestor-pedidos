@@ -3,7 +3,7 @@ import { Menu } from "lucide-react";
 import { Button } from "@/shared/components/iu";
 import { useLocation } from "react-router-dom";
 
-// No-op comment to force re-processing
+
 
 
 const getTitle = (pathname: string) => {

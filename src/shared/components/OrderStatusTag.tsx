@@ -3,9 +3,9 @@ import type { OrderStatus } from '@/features/orders/types/order.types';
 
 interface OrderStatusTagProps {
   status: OrderStatus;
-  isInteractive?: boolean; // If it's a button, it might have different styling
-  isSelected?: boolean; // For interactive status tags (buttons)
-  onClick?: (status: OrderStatus) => void; // For interactive status tags (buttons)
+  isInteractive?: boolean; 
+  isSelected?: boolean; 
+  onClick?: (status: OrderStatus) => void; 
 }
 
 const statusColors = {

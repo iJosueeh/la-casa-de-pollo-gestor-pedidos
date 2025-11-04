@@ -7,7 +7,7 @@ export const orderController = {
     try {
       const orderPayload: CreateOrderPayload = req.body;
 
-      // Basic validation (can be expanded with a validation library)
+      
       if (!orderPayload.clientId || !orderPayload.userId || !orderPayload.nombrecliente || !orderPayload.items || orderPayload.items.length === 0) {
         res.status(400).json({ error: 'Missing required order fields' });
         return;

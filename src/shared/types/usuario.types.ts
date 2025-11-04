@@ -3,5 +3,5 @@ export interface Usuario {
   nombre: string;
   email: string;
   rol: string;
-  // Add other fields as necessary, but avoid sensitive info like password here
+  
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal } from '@/features/admin/components/Modal'; // Reusing the generic Modal component
+import { Modal } from '@/features/admin/components/Modal'; 
 import { Input } from '@/shared/components/iu';
 import { Button } from '@/shared/components/iu';
 import { useNotificationContext } from '@/shared/context/NotificationContext';
@@ -35,7 +35,7 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setClientDetails(prev => ({ ...prev, [name]: value }));
-    // Clear errors when input changes
+    
     if (name === 'nombre' && nombreError) setNombreError(undefined);
     if (name === 'email' && emailError) setEmailError(undefined);
   };
@@ -56,12 +56,12 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
     }
 
     if (hasError) {
-      return; // Stop if there are validation errors
+      return; 
     }
 
     setIsLoading(true);
     try {
-      // First, try to create the client
+      
       const client = await apiClient.post<BackendClient>('/api/clients', {
         nombre: clientDetails.nombre,
         email: clientDetails.email,
@@ -69,12 +69,12 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
         direccion: clientDetails.direccion,
       });
 
-      // Now, pass the client info back to the parent component (CartView)
+      
       onClientConfirmed({
         clientId: client.idcliente,
         nombrecliente: client.nombre,
         direccion: client.direccion,
-        notas: clientDetails.notas, // Use the notes from the form for the order
+        notas: clientDetails.notas, 
       });
       showNotification('Cliente confirmado con éxito.', 'success');
       onClose();

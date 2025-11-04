@@ -1,7 +1,7 @@
-import { Product } from './product.types';
+
 
 export interface OrderItemPayload {
-  productId: number; // Corrected to number to match idproducto in DB
+  productId: number; 
   quantity: number;
   price: number;
 }

@@ -23,10 +23,10 @@ export const orderRepository = {
       .insert({
         idcliente: orderData.idcliente,
         idusuario: orderData.idusuario,
-        nombrecliente: orderData.nombrecliente, // Corrected to nombrecliente
+        nombrecliente: orderData.nombrecliente, 
         direccion: orderData.direccion,
         notas: orderData.notas,
-        estado: 'pendiente', // Default status
+        estado: 'pendiente', 
         total: orderData.total,
       })
       .select()
@@ -106,10 +106,10 @@ export const orderRepository = {
       return null;
     }
 
-    // Extract unique product IDs
+    
     const productIds = [...new Set(detailsData.map(detail => detail.idproducto))];
 
-    // Fetch product names and prices separately
+    
     const { data: productsData, error: productsError } = await supabase
       .from('producto')
       .select('idproducto, nombre, precio')
@@ -147,14 +147,14 @@ export const orderRepository = {
       .from('pedido')
       .update({ estado: newStatus })
       .eq('idpedido', orderId)
-      .select(); // Removed .single()
+      .select(); 
 
     if (error) {
       console.error(`Supabase error updating status for order ${orderId}:`, error);
       throw new Error('Could not update order status');
     }
 
-    // If data is an empty array, it means no row was found/updated
+    
     if (!data || data.length === 0) {
       return null;
     }

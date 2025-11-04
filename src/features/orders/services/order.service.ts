@@ -1,10 +1,10 @@
 import type { Order, OrderStatus } from '../types';
 import type { CartItem } from '@/features/cart/types';
-import { apiClient } from '@/shared/utils/apiClient'; // Import apiClient
+import { apiClient } from '@/shared/utils/apiClient'; 
 
 interface CreateOrderFrontendPayload {
   clientId: number;
-  userId: number; // Assuming a default user for now, will need actual user management later
+  userId: number; 
   nombrecliente: string;
   direccion?: string;
   notas?: string;
@@ -34,12 +34,12 @@ export const createOrder = async (cartItems: CartItem[], clientInfo: { clientId:
   try {
     const payload: CreateOrderFrontendPayload = {
       clientId: clientInfo.clientId,
-      userId: 1, // Placeholder user ID
+      userId: 1, 
       nombrecliente: clientInfo.nombrecliente,
       direccion: clientInfo.direccion,
       notas: clientInfo.notas,
       items: cartItems.map(item => ({
-        productId: parseInt(item.id), // Convert string ID to number for backend
+        productId: parseInt(item.id), 
         quantity: item.quantity,
         price: item.price,
       })),
@@ -59,15 +59,15 @@ export const getOrders = async (statusFilter?: OrderStatus, page?: number, limit
       params: { status: statusFilter, page, limit },
     });
 
-    // Map backend Pedido type to frontend Order type
+    
     const mappedOrders: Order[] = response.orders.map(bOrder => ({
       id: bOrder.idpedido.toString(),
       client: bOrder.nombrecliente,
       total: bOrder.total,
       createdAt: bOrder.fecha,
       status: bOrder.estado,
-      products: [], // BackendOrder does not contain product details
-      paymentMethod: "Efectivo", // Placeholder as BackendOrder does not contain payment method
+      products: [], 
+      paymentMethod: "Efectivo",
     }));
 
     return { orders: mappedOrders, totalCount: response.totalCount };
@@ -109,13 +109,3 @@ export const updateOrderStatus = async (orderId: string, newStatus: OrderStatus)
   }
 };
 
-// These functions will need to be migrated to backend API calls if full backend management is desired
-export const actualizarPedido = async (id: string, cambios: Partial<Order>): Promise<Order | null> => {
-  console.warn('actualizarPedido is not yet implemented via backend API.');
-  return null;
-};
-
-export const eliminarPedido = async (id: string): Promise<boolean> => {
-  console.warn('eliminarPedido is not yet implemented via backend API.');
-  return false;
-};

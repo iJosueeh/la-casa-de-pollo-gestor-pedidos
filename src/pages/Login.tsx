@@ -4,7 +4,7 @@ import { useNotification } from '../shared/hooks/useNotification';
 import React from 'react';
 import { Input } from '@/shared/components/iu';
 import { Button } from '@/shared/components/iu';
-import { useAuth } from '@/shared/hooks/useAuth'; // Import useAuth
+import { useAuth } from '@/shared/hooks/useAuth'; 
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -14,7 +14,7 @@ export default function Login() {
   const [generalError, setGeneralError] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
   const { showNotification } = useNotification();
-  const { login } = useAuth(); // Use the new useAuth hook
+  const { login } = useAuth(); 
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,7 +37,7 @@ export default function Login() {
     }
 
     try {
-      await login(email, password); // Use the login function from useAuth
+      await login(email, password); 
       showNotification('¡Bienvenido!', 'success');
       navigate('/');
     } catch (error: unknown) {

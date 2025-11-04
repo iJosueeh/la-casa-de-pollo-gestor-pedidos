@@ -16,7 +16,7 @@ export const clientRepository = {
     return data as Client;
   },
 
-  // Potentially add a function to find a client by email or ID later
+  
   async findClientByEmail(email: string): Promise<Client | null> {
     const { data, error } = await supabase
       .from('cliente')

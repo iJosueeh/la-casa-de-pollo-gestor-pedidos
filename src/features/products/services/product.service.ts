@@ -1,5 +1,4 @@
-import type { Product } from "@/features/products/types/product.types";
-import { apiClient } from "@/shared/utils/apiClient"; // Import apiClient
+import { apiClient } from "@/shared/utils/apiClient"; 
 
 interface BackendProduct {
   idproducto: number;

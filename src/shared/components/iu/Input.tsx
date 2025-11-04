@@ -9,7 +9,7 @@ type InputProps = {
   name?: string;
   label?: string;
   required?: boolean;
-  error?: string; // New prop for error message
+  error?: string; 
 };
 
 export const Input: React.FC<InputProps> = ({
@@ -21,7 +21,7 @@ export const Input: React.FC<InputProps> = ({
   name,
   label,
   required,
-  error, // Destructure error
+  error, 
 }) => {
   const inputClasses = `
     border rounded-md px-3 py-2 w-full

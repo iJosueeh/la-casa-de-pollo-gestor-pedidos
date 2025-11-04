@@ -8,7 +8,7 @@ import { AppSidebar } from "./shared/components/layout/Sidebar";
 import { Notification } from './shared/components/Notification';
 import { useNotificationContext } from './shared/context/NotificationContext';
 import { Outlet, useNavigate } from "react-router-dom";
-import { useAuth } from "./shared/hooks/useAuth"; // Import useAuth
+import { useAuth } from "./shared/hooks/useAuth"; 
 
 
 function App() {
@@ -16,9 +16,9 @@ function App() {
   const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
   const { notification, hideNotification } = useNotificationContext();
   const navigate = useNavigate();
-  const { logout } = useAuth(); // Use the new useAuth hook
+  const { logout } = useAuth(); 
 
-  // 🟡 Control del menú lateral
+  
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
     console.log('toggleSidebar called, isSidebarOpen:', !isSidebarOpen);
@@ -29,21 +29,21 @@ function App() {
     console.log('closeSidebar called');
   };
 
-  // 🔐 Cierre de sesión
+  
   const handleLogout = () => {
-    logout(); // Use the logout function from useAuth
-    navigate('/login'); // Navigate after logout
+    logout(); 
+    navigate('/login'); 
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-white overflow-x-hidden">
-      {/* 🐔 Encabezado */}
+      {/* Encabezado */}
       <AppHeader
         onMenuClick={toggleSidebar}
         className=""
       />
 
-      {/* 🟨 Cuerpo principal */}
+      {/* Cuerpo principal */}
       <div className="flex flex-1 pt-16">
         {/* Sidebar lateral */}
         <AppSidebar
@@ -53,7 +53,7 @@ function App() {
           isDesktop={isDesktop}
         />
 
-        {/* Contenido dinámico */}
+        
                 <main
                   className={`flex-1 p-6 bg-gray-50 transition-all duration-300 overflow-y-auto min-h-[calc(100vh-4rem)]`}          onClick={() => !isDesktop && isSidebarOpen && closeSidebar()}
         >

@@ -12,7 +12,7 @@ export const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ children, classNam
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Cerrar el menú al hacer clic fuera
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -20,7 +20,6 @@ export const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ children, classNam
       }
     };
 
-    // Cerrar el menú al cambiar el tamaño de la ventana
     const handleResize = () => {
       if (window.innerWidth >= 768) {
         setIsOpen(false);
