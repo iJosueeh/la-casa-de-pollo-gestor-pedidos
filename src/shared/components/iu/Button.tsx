@@ -5,6 +5,7 @@ type ButtonProps = {
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
   variant?: "primary" | "secondary" | "info";
+  disabled?: boolean;
   className?: string;
   gradient?: boolean; 
 };
