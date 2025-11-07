@@ -28,7 +28,7 @@ export const orderController = {
       const limitNumber = limit ? parseInt(limit as string, 10) : undefined;
 
       const { orders, totalCount } = await orderService.listAllOrders(status as string | undefined, pageNumber, limitNumber);
-      console.log('Backend response for getOrders - orders:', orders);
+
       res.json({ orders, totalCount });
     }
     catch (error: unknown) {

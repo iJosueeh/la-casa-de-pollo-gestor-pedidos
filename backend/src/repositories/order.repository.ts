@@ -47,7 +47,7 @@ export const orderRepository = {
   },
 
   async createPayment(paymentData: CreatePaymentPayload): Promise<void> {
-    console.log('Creating payment with data:', paymentData);
+
     const { data, error } = await supabase
       .from('pago')
       .insert({
@@ -73,7 +73,7 @@ export const orderRepository = {
       console.error('Supabase error creating order details:', error);
       throw new Error('Could not create order details');
     }
-    console.log('Supabase response for creating order details:', data);
+
     return data as DetallePedido[];
   },
 
@@ -99,7 +99,7 @@ export const orderRepository = {
   },
 
   async getOrderById(orderId: number): Promise<Pedido & { products: { idproducto: number; name: string; quantity: number; price: number; subtotal: number }[] } | null> {
-    console.log('Fetching order details for orderId:', orderId);
+
     const { data: orderData, error: orderError } = await supabase
       .from('pedido')
       .select('*, pago_idpedido_fkey(*)')
@@ -122,8 +122,8 @@ export const orderRepository = {
       `)
       .eq('idpedido', orderId);
 
-    console.log('Raw detailsData from Supabase:', detailsData);
-    console.log('Raw detailsError from Supabase:', detailsError);
+
+
 
     if (detailsError) {
       console.error(`Error fetching order details for order id ${orderId}:`, detailsError);
@@ -160,13 +160,13 @@ export const orderRepository = {
       };
     });
 
-    console.log('Mapped products:', products);
+
 
     return { ...orderData, products };
   },
 
   async updateOrderStatus(orderId: number, newStatus: string): Promise<Pedido | null> {
-    console.log(`Attempting to update order ${orderId} to status ${newStatus}`);
+
     const { data, error } = await supabase
       .from('pedido')
       .update({ estado: newStatus })
