@@ -11,6 +11,13 @@ interface CreatePedidoPayload {
   total: number;
 }
 
+interface CreatePaymentPayload {
+  idpedido: number;
+  monto: number;
+  metodo: string;
+  fechapago: Date;
+}
+
 interface ProductDetailFromJoin {
   nombre: string;
   precio: number;
@@ -39,6 +46,23 @@ export const orderRepository = {
     return data as Pedido;
   },
 
+  async createPayment(paymentData: CreatePaymentPayload): Promise<void> {
+    console.log('Creating payment with data:', paymentData);
+    const { data, error } = await supabase
+      .from('pago')
+      .insert({
+        idpedido: paymentData.idpedido,
+        monto: paymentData.monto,
+        metodo: paymentData.metodo,
+        fechapago: paymentData.fechapago.toISOString(),
+      });
+
+    if (error) {
+      console.error('Supabase error creating payment:', error);
+      throw new Error('Could not create payment');
+    }
+  },
+
   async createOrderDetails(orderDetails: Omit<DetallePedido, 'iddetalle'>[]): Promise<DetallePedido[]> {
     const { data, error } = await supabase
       .from('detallepedido')
@@ -56,7 +80,7 @@ export const orderRepository = {
   async getAllOrders(status?: string, page: number = 1, limit: number = 6): Promise<{ orders: Pedido[], totalCount: number }> {
     const offset = (page - 1) * limit;
 
-    let query = supabase.from('pedido').select('*', { count: 'exact' }).order('fecha', { ascending: false }).order('idpedido', { ascending: false });
+    let query = supabase.from('pedido').select('*, pago_idpedido_fkey(*)', { count: 'exact' }).order('fecha', { ascending: false }).order('idpedido', { ascending: false });
 
     if (status) {
       query = query.eq('estado', status);
@@ -78,7 +102,7 @@ export const orderRepository = {
     console.log('Fetching order details for orderId:', orderId);
     const { data: orderData, error: orderError } = await supabase
       .from('pedido')
-      .select('*')
+      .select('*, pago_idpedido_fkey(*)')
       .eq('idpedido', orderId)
       .single();
 

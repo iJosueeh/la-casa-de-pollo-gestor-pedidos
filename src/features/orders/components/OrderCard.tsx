@@ -31,7 +31,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order: initialOrder }) => 
   return (
     <Card className="mb-4 transition-all duration-300">
       <div className="p-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2 sm:gap-4 items-center">
           <div className="md:col-span-1">
             <h3 className="font-bold text-xl mb-1">Pedido #{orderToDisplay.id.substring(0, 8)}</h3>
             <p className="text-sm text-gray-600">Cliente: {orderToDisplay.client}</p>

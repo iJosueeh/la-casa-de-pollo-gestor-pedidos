@@ -38,7 +38,7 @@ export const CartView = () => {
       setIsClientModalOpen(true); 
     };
 
-    const handleClientConfirmed = async (clientInfo: { clientId: number; nombrecliente: string; direccion?: string; notas?: string }) => {
+    const handleClientConfirmed = async (clientInfo: { clientId: number; nombrecliente: string; direccion?: string; notas?: string; metodoPago: string; }) => {
       try {
         
         const order = await createOrder(cartItems, clientInfo);
@@ -61,7 +61,7 @@ export const CartView = () => {
 
     return (
         <div className="flex-1 p-6 overflow-y-auto">
-            <div className="max-w-7x1 mx-autookat">
+            <div className="max-w-7xl mx-auto">
                 <div className="flex items-center justify-between mb-6">
                     <div className="w-6 lg:hidden" />
                 </div>
@@ -82,7 +82,7 @@ export const CartView = () => {
                             cartItems.map((item) => (
                                 <div
                                     key={item.id}
-                                    className="bg-white rounded-xl shadow-lg p-6 flex items-center space-x-4 lg:space-x-10"
+                                    className="bg-white rounded-xl shadow-lg p-6 flex items-center gap-x-2 sm:gap-x-4 lg:gap-x-10 flex-wrap"
                                 >
                                     <div className="bg-linear-to-br from-red-100 to-orange-100 w-20 h-20 rounded-lg flex items-center justify-center text-4xl">
                                         <img
@@ -100,7 +100,7 @@ export const CartView = () => {
                                             S/ {item.price.toFixed(2)}
                                         </p>
                                     </div>
-                                    <div className="flex items-center space-x-3">
+                                    <div className="flex items-center gap-1">
                                         <button
                                             onClick={() => handleUpdateQuantity(item, -1)}
                                             className="bg-gray-200 p-2 rounded-lg"

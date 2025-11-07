@@ -8,6 +8,7 @@ interface CreateOrderFrontendPayload {
   nombrecliente: string;
   direccion?: string;
   notas?: string;
+  metodoPago: string;
   items: Array<{ productId: number; quantity: number; price: number }>;
 }
 
@@ -24,13 +25,14 @@ interface BackendOrder {
   total: number;
   fecha: string;
   estado: OrderStatus;
+  pago_idpedido_fkey: { metodo: string }[];
 }
 
 interface BackendOrderDetails extends BackendOrder {
   products: BackendProduct[];
 }
 
-export const createOrder = async (cartItems: CartItem[], clientInfo: { clientId: number; nombrecliente: string; direccion?: string; notas?: string }): Promise<Order | null> => {
+export const createOrder = async (cartItems: CartItem[], clientInfo: { clientId: number; nombrecliente: string; direccion?: string; notas?: string; metodoPago: string }): Promise<Order | null> => {
   try {
     const payload: CreateOrderFrontendPayload = {
       clientId: clientInfo.clientId,
@@ -38,6 +40,7 @@ export const createOrder = async (cartItems: CartItem[], clientInfo: { clientId:
       nombrecliente: clientInfo.nombrecliente,
       direccion: clientInfo.direccion,
       notas: clientInfo.notas,
+      metodoPago: clientInfo.metodoPago,
       items: cartItems.map(item => ({
         productId: parseInt(item.id), 
         quantity: item.quantity,
@@ -58,6 +61,7 @@ export const getOrders = async (statusFilter?: OrderStatus, page?: number, limit
     const response = await apiClient.get<{ orders: BackendOrder[], totalCount: number }>("/api/orders", {
       params: { status: statusFilter, page, limit },
     });
+    console.log('Backend response for getOrders:', response);
 
     
     const mappedOrders: Order[] = response.orders.map(bOrder => ({
@@ -67,7 +71,7 @@ export const getOrders = async (statusFilter?: OrderStatus, page?: number, limit
       createdAt: bOrder.fecha,
       status: bOrder.estado,
       products: [], 
-      paymentMethod: "Efectivo",
+      paymentMethod: bOrder.pago_idpedido_fkey ? bOrder.pago_idpedido_fkey.metodo : "N/A",
     }));
 
     return { orders: mappedOrders, totalCount: response.totalCount };
@@ -89,7 +93,7 @@ export const getOrderDetails = async (orderId: string): Promise<Order | null> =>
       createdAt: orderDetails.fecha,
       status: orderDetails.estado,
       products: orderDetails.products.map((p: BackendProduct) => ({ id: p.idproducto.toString(), name: p.name, quantity: p.quantity, price: p.price })),
-      paymentMethod: "Efectivo",
+      paymentMethod: orderDetails.pago_idpedido_fkey ? orderDetails.pago_idpedido_fkey.metodo : "N/A",
     };
 
     return mappedOrder;

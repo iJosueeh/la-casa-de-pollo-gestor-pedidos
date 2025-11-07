@@ -12,7 +12,16 @@ export interface CreateOrderPayload {
   nombrecliente: string;
   direccion?: string;
   notas?: string;
+  metodoPago: string;
   items: OrderItemPayload[];
+}
+
+export interface Pago {
+  idpago: number;
+  idpedido: number;
+  monto: number;
+  metodo: string;
+  fechapago: string;
 }
 
 export interface Pedido {
@@ -25,6 +34,7 @@ export interface Pedido {
   total: number;
   idcliente: number;
   idusuario: number;
+  pago: Pago[];
 }
 
 export interface DetallePedido {

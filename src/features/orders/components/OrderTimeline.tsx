@@ -63,12 +63,12 @@ export const OrderTimeline: React.FC<OrderTimelineProps> = ({ currentStatus }) =
                 className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-white text-xs sm:text-sm transition-colors duration-300 ${circleBgClass}`}>
                 {isCompleted ? '✓' : index + 1}
               </div>
-              <p className={`mt-1 text-[0.6rem] sm:text-xs font-medium ${textClass}`}>
+              <p className={`mt-1 text-[0.5rem] xs:text-[0.6rem] sm:text-xs font-medium ${textClass}`}>
                 {status}
               </p>            </div>
             {index < STATUS_SEQUENCE.length - 1 && (
               <div
-                className={`flex-1 h-1 mx-2 transition-colors duration-300 ${isCompleted ? 'bg-green-500' : 'bg-gray-300'
+                className={`flex-1 h-1 mx-1 transition-colors duration-300 ${isCompleted ? 'bg-green-500' : 'bg-gray-300'
                   }`}
               />
             )}

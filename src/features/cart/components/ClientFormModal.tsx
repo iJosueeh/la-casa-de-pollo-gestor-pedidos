@@ -16,7 +16,7 @@ interface BackendClient {
 interface ClientFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onClientConfirmed: (clientInfo: { clientId: number; nombrecliente: string; direccion?: string; notas?: string }) => void;
+  onClientConfirmed: (clientInfo: { clientId: number; nombrecliente: string; direccion?: string; notas?: string; metodoPago: string; }) => void;
 }
 
 export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClose, onClientConfirmed }) => {
@@ -27,15 +27,16 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
     telefono: '',
     direccion: '',
     notas: '',
+    metodoPago: 'Efectivo',
   });
   const [nombreError, setNombreError] = useState<string | undefined>(undefined);
   const [emailError, setEmailError] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setClientDetails(prev => ({ ...prev, [name]: value }));
-    
+
     if (name === 'nombre' && nombreError) setNombreError(undefined);
     if (name === 'email' && emailError) setEmailError(undefined);
   };
@@ -56,12 +57,11 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
     }
 
     if (hasError) {
-      return; 
+      return;
     }
 
     setIsLoading(true);
     try {
-      
       const client = await apiClient.post<BackendClient>('/api/clients', {
         nombre: clientDetails.nombre,
         email: clientDetails.email,
@@ -69,12 +69,12 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
         direccion: clientDetails.direccion,
       });
 
-      
       onClientConfirmed({
         clientId: client.idcliente,
         nombrecliente: client.nombre,
         direccion: client.direccion,
-        notas: clientDetails.notas, 
+        notas: clientDetails.notas,
+        metodoPago: clientDetails.metodoPago,
       });
       showNotification('Cliente confirmado con éxito.', 'success');
       onClose();
@@ -129,6 +129,22 @@ export const ClientFormModal: React.FC<ClientFormModalProps> = ({ isOpen, onClos
             onChange={handleChange}
             placeholder="Ej: Av. Los Girasoles 123"
           />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="metodoPago" className="block text-sm font-medium text-gray-700">Método de Pago</label>
+          <select
+            id="metodoPago"
+            name="metodoPago"
+            value={clientDetails.metodoPago}
+            onChange={handleChange}
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          >
+            <option>Efectivo</option>
+            <option>Yape</option>
+            <option>Plin</option>
+            <option>Tarjeta de Crédito/Débito</option>
+            <option>Transferencia Bancaria</option>
+          </select>
         </div>
         <div className="mb-6">
           <Input

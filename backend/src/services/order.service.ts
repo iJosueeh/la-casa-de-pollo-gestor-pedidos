@@ -10,7 +10,7 @@ interface OrderProduct {
 
 export const orderService = {
   async processNewOrder(payload: CreateOrderPayload): Promise<Pedido> {
-    const { clientId, userId, nombrecliente, direccion, notas, items } = payload;
+    const { clientId, userId, nombrecliente, direccion, notas, items, metodoPago } = payload;
 
     
     const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -36,6 +36,13 @@ export const orderService = {
 
     
     await orderRepository.createOrderDetails(orderDetailsToCreate);
+
+    await orderRepository.createPayment({
+      idpedido: newOrder.idpedido,
+      monto: total,
+      metodo: metodoPago,
+      fechapago: new Date(),
+    });
 
     return newOrder;
   },
